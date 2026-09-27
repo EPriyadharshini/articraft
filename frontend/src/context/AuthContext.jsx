@@ -75,6 +75,7 @@ export function AuthProvider({ children }) {
     setUser(null);
     setToken('');
     setSessionExpired(false);
+    localStorage.removeItem('articraft-cart');
     localStorage.removeItem('articraft-user');
     localStorage.removeItem('articraft-token');
   };

@@ -14,29 +14,41 @@ const readLocal = () => {
 
 export function WishlistProvider({ children }) {
   const { user } = useAuth();
-  const [wishlist, setWishlist] = useState(readLocal);
+  const [wishlist, setWishlist] = useState([]);
   const syncedUser = useRef('');
 
   useEffect(() => {
-    if (user?.role === 'CUSTOMER') {
+    if (user?.role === "CUSTOMER") {
       if (syncedUser.current === user._id) return;
+
       syncedUser.current = user._id;
-      const mergeAnonymousWishlist = async () => {
-        for (const productId of readLocal()) {
+
+      const syncWishlist = async () => {
+        const localWishlist = readLocal();
+
+        for (const productId of localWishlist) {
           try {
             await api.post(`/wishlist/${productId}`);
           } catch (error) {
-            console.error('Unable to merge wishlist item', error);
+            console.error("Unable to merge wishlist item", error);
           }
         }
-        const response = await api.get('/wishlist');
-        setWishlist((response.data.data.wishlist.products || []).map((product) => product._id));
-        localStorage.removeItem('articraft-wishlist');
+
+        const response = await api.get("/wishlist");
+
+        setWishlist(
+          (response.data.data.wishlist.products || []).map(
+            (product) => product._id,
+          ),
+        );
+
+        localStorage.removeItem("articraft-wishlist");
       };
-      mergeAnonymousWishlist()
-        .catch(console.error);
+
+      syncWishlist().catch(console.error);
     } else {
-      localStorage.setItem('articraft-wishlist', JSON.stringify(wishlist));
+      // Logged out → don't show wishlist items
+      setWishlist([]);
     }
   }, [user]);
 
