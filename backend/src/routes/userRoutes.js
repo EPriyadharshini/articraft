@@ -6,7 +6,6 @@ import Order from '../models/Order.js';
 import { protect, authorize } from '../middleware/auth.js';
 import { handleValidationErrors } from '../middleware/validate.js';
 import { errorResponse, successResponse } from '../utils/apiResponse.js';
-
 const router = express.Router();
 
 const artistProfile = (artist) => {

@@ -26,3 +26,7 @@ export const config = {
     return process.env.MONGODB_URI;
   },
 };
+
+// console.log("Cloud name:", process.env.CLOUDINARY_CLOUD_NAME);
+// console.log("API key exists:", !!process.env.CLOUDINARY_API_KEY);
+// console.log("API secret exists:", !!process.env.CLOUDINARY_API_SECRET);
