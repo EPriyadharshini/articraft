@@ -72,7 +72,7 @@ const validateProductUpdate = [
 const findArtistForUser = (userId) => Artist.findOne({ user: userId });
 
 const canManageProduct = (user, product) =>
-  user.role === 'ADMIN' || (user.role === 'ARTIST' && product.artist?.user?.toString() === user._id.toString());
+  user.role === 'ADMIN' || (user.role === 'ARTIST' && product.artist?.user?._id?.toString() === user._id.toString());
 
 router.get(
   '/',
@@ -225,12 +225,24 @@ router.patch('/:id', protect, authorize('ARTIST', 'ADMIN'), productImagesUpload,
 
 router.delete('/:id', protect, authorize('ARTIST', 'ADMIN'), async (req, res, next) => {
   try {
-    const product = await Product.findById(req.params.id).populate({ path: 'artist', populate: { path: 'user' } });
-    if (!product) return errorResponse(res, 'Product not found', 404);
-    if (!canManageProduct(req.user, product)) return errorResponse(res, 'You can only manage your own products', 403);
-    product.isActive = false;
-    await product.save();
-    return successResponse(res, null, 'Product removed');
+    const product = await Product.findById(req.params.id).populate({
+      path: "artist",
+      populate: { path: "user" },
+    });
+    if (!product) return errorResponse(res, "Product not found", 404);
+    if (!canManageProduct(req.user, product))
+      return errorResponse(res, "You can only manage your own products", 403);
+    // Delete images from Cloudinary
+    for (const image of product.images || []) {
+      if (image.publicId) {
+        await deleteImage(image.publicId);
+      }
+    }
+
+    // Permanently delete product from MongoDB
+    await Product.findByIdAndDelete(req.params.id);
+
+    return successResponse(res, null, "Product permanently deleted");
   } catch (error) {
     next(error);
   }

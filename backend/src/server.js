@@ -16,6 +16,7 @@ import reviewRoutes from './routes/reviewRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import { errorHandler, notFound } from './middleware/error.js';
 import { successResponse } from './utils/apiResponse.js';
+import { testCloudinary } from "./utils/cloudinary.js";
 
 validateEnvironment();
 
@@ -43,7 +44,7 @@ app.use('/api/admin', adminRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
-
+await testCloudinary();
 const start = async () => {
   await connectDB();
   app.listen(config.port, () => console.log(`Server running on port ${config.port}`));
