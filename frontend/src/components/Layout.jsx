@@ -177,7 +177,7 @@ export default function Layout({ children }) {
               <Link to="/artists" className="hover:text-forest dark:hover:text-blue-400">Discover 50+ Makers</Link>
             </div>
           </div>
-        </div> */}
+        </div>
 
         {/* Mobile menu dropdown */}
         {menuOpen && (
