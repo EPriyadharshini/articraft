@@ -5,6 +5,7 @@ import api from '../services/api';
 import { motion } from 'framer-motion';
 import { formatINR } from '../utils/currency';
 import ProductCard from '../components/ProductCard';
+import homelogo from '../../public/homelogo.jpg'
 
 const categories = [
   { name: 'Textiles', description: 'Handwoven silk, linen & tapestry', image: 'https://images.unsplash.com/photo-1528458876861-544fd1761a91?auto=format&fit=crop&w=900&q=80' },
@@ -203,7 +204,7 @@ export default function HomePage() {
           <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.18 }} className="relative">
             <div className="relative overflow-hidden rounded-[2.5rem] border border-stone-200/80 bg-white p-3 shadow-soft dark:border-stone-800 dark:bg-[#0b0d16]">
               <img
-                src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1400&q=85"
+                src={homelogo}
                 alt="Artisan ceramic craft showcase"
                 className="h-[460px] sm:h-[540px] xl:h-[620px] w-full rounded-[2rem] object-cover"
               />
@@ -430,7 +431,7 @@ export default function HomePage() {
               Open your shop, manage products, receive tracked orders, and connect with collectors worldwide.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link to="/signup" className="rounded-full bg-white px-7 py-3 text-sm font-semibold text-forest transition hover:bg-stone-100 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700">
+              <Link to="/signup" className="rounded-full bg-white px-7 py-3 text-sm font-semibold text-forest transition hover:bg-black-700 dark:bg-black-900 dark:text-white dark:hover:bg-blue-900">
                 Become a Seller
               </Link>
               <Link to="/about" className="rounded-full border border-white/40 px-7 py-3 text-sm font-semibold text-white transition hover:bg-white/10 dark:border-stone-700 dark:hover:bg-stone-800">

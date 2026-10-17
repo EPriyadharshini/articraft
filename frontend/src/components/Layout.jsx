@@ -52,7 +52,12 @@ export default function Layout({ children }) {
 
   return (
     <div className="min-h-screen bg-[#fffaf5] text-slate-900 dark:bg-[#05060f] dark:text-slate-100">
-      <a href="#main-content" className="skip-link rounded-full bg-forest px-4 py-2 text-sm font-medium text-white dark:bg-blue-600">Skip to main content</a>
+      <a
+        href="#main-content"
+        className="skip-link rounded-full bg-forest px-4 py-2 text-sm font-medium text-white dark:bg-blue-600"
+      >
+        Skip to main content
+      </a>
       <header className="sticky top-0 z-40 border-b border-stone-200 bg-[#fffaf5]/90 backdrop-blur-xl dark:border-stone-800 dark:bg-[#05060f]/90">
         {/* Primary Header Row: Brand, Amazon-style Search, Actions */}
         <div className="section-shell flex items-center justify-between gap-4 py-3.5">
@@ -61,12 +66,17 @@ export default function Layout({ children }) {
               <Sparkles size={18} />
             </div>
             <div>
-              <div className="font-display text-2xl font-bold tracking-tight text-forest dark:text-slate-100">Articraft</div>
+              <div className="font-display text-2xl font-bold tracking-tight text-forest dark:text-slate-100">
+                Articraft
+              </div>
             </div>
           </Link>
 
           {/* Amazon-style search bar on desktop */}
-          <form onSubmit={handleHeaderSearch} className="hidden flex-1 max-w-2xl lg:flex items-center rounded-full border border-stone-300 bg-white shadow-sm transition-all focus-within:border-forest focus-within:ring-2 focus-within:ring-forest/20 dark:border-stone-700 dark:bg-[#0b0d16] dark:focus-within:border-blue-500">
+          <form
+            onSubmit={handleHeaderSearch}
+            className="hidden flex-1 max-w-2xl lg:flex items-center rounded-full border border-stone-300 bg-white shadow-sm transition-all  dark:border-stone-700 dark:bg-[#0b0d16] dark:focus-within:border-blue-500"
+          >
             <select
               aria-label="Search category"
               value={headerCategory}
@@ -75,7 +85,9 @@ export default function Layout({ children }) {
             >
               <option value="All">All Categories</option>
               {headerCategories.map((c) => (
-                <option key={c} value={c}>{c}</option>
+                <option key={c} value={c}>
+                  {c}
+                </option>
               ))}
             </select>
 
@@ -84,9 +96,8 @@ export default function Layout({ children }) {
               placeholder="Search original art, artisan pottery, textiles, jewelry..."
               value={headerSearch}
               onChange={(e) => setHeaderSearch(e.target.value)}
-              className="h-10 flex-1 bg-transparent px-4 text-sm text-slate-800 placeholder-slate-400 outline-none dark:text-slate-100 dark:placeholder-slate-500"
+              className="h-10 flex-1 bg-transparent px-4 text-sm text-slate-800 placeholder-slate-400 outline-none focus:outline-none  dark:text-slate-100 dark:placeholder-slate-500"
             />
-
             <button
               type="submit"
               aria-label="Search"
@@ -105,8 +116,8 @@ export default function Layout({ children }) {
                   to={to}
                   className={({ isActive }) =>
                     isActive
-                      ? 'text-forest font-semibold dark:text-blue-400'
-                      : 'hover:text-forest transition dark:hover:text-blue-400'
+                      ? "text-forest font-semibold dark:text-blue-400"
+                      : "hover:text-forest transition dark:hover:text-blue-400"
                   }
                 >
                   {label}
@@ -117,8 +128,11 @@ export default function Layout({ children }) {
             <div className="h-4 w-px bg-stone-300 dark:bg-stone-700" />
 
             <div className="flex items-center gap-2.5">
-              <ThemeToggle />
-              <Link to="/wishlist" className="relative rounded-full border border-stone-300 p-2 text-slate-700 transition hover:border-forest hover:text-forest dark:border-stone-700 dark:text-slate-300 dark:hover:border-blue-400 dark:hover:text-blue-400" aria-label="Wishlist">
+              <Link
+                to="/wishlist"
+                className="relative rounded-full border border-stone-300 p-2 text-slate-700 transition hover:border-forest hover:text-forest dark:border-stone-700 dark:text-slate-300 dark:hover:border-blue-400 dark:hover:text-blue-400"
+                aria-label="Wishlist"
+              >
                 <Heart size={16} />
                 {wishlist.length > 0 && (
                   <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-clay px-1 text-[9px] font-bold text-white">
@@ -126,7 +140,11 @@ export default function Layout({ children }) {
                   </span>
                 )}
               </Link>
-              <Link to="/cart" className="relative rounded-full border border-stone-300 p-2 text-slate-700 transition hover:border-forest hover:text-forest dark:border-stone-700 dark:text-slate-300 dark:hover:border-blue-400 dark:hover:text-blue-400" aria-label="Cart">
+              <Link
+                to="/cart"
+                className="relative rounded-full border border-stone-300 p-2 text-slate-700 transition hover:border-forest hover:text-forest dark:border-stone-700 dark:text-slate-300 dark:hover:border-blue-400 dark:hover:text-blue-400"
+                aria-label="Cart"
+              >
                 <ShoppingBag size={16} />
                 {cart.length > 0 && (
                   <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-clay px-1 text-[9px] font-bold text-white">
@@ -136,25 +154,42 @@ export default function Layout({ children }) {
               </Link>
               {user ? (
                 <div className="flex items-center gap-2 ml-1">
-                  <Link to="/account" className="flex items-center gap-1.5 rounded-full bg-forest px-3.5 py-1.5 text-xs font-semibold text-white dark:bg-blue-600">
+                  <Link
+                    to="/account"
+                    className="flex items-center gap-1.5 rounded-full bg-forest px-3.5 py-1.5 text-xs font-semibold text-white dark:bg-blue-600"
+                  >
                     <UserRound size={13} />
-                    {user.name.split(' ')[0]}
+                    {user.name.split(" ")[0]}
                   </Link>
-                  <button onClick={logout} className="text-xs text-slate-500 hover:text-forest dark:text-slate-400 dark:hover:text-blue-400">Log Out</button>
+                  <button
+                    onClick={logout}
+                    className="text-xs text-slate-500 hover:text-forest dark:text-slate-400 dark:hover:text-blue-400"
+                  >
+                    Log Out
+                  </button>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 ml-1">
-                  <Link to="/login" className="rounded-full border border-stone-300 px-3.5 py-1.5 text-xs font-medium text-slate-700 hover:border-forest hover:text-forest dark:border-stone-700 dark:text-slate-200 dark:hover:border-blue-400 dark:hover:text-blue-400">Login</Link>
-                  <Link to="/signup" className="rounded-full bg-forest px-3.5 py-1.5 text-xs font-semibold text-white shadow-soft hover:bg-emerald-900 dark:bg-blue-600 dark:hover:bg-blue-700">Sign up</Link>
+                <div className="flex items-center ml-1">
+                  <Link
+                    to="/login"
+                    className="rounded-full bg-forest px-5 py-2 text-sm font-semibold text-white shadow-soft transition hover:bg-emerald-900 dark:bg-blue-600 dark:hover:bg-blue-700"
+                  >
+                    Get Started
+                  </Link>
                 </div>
               )}
             </div>
+            <ThemeToggle />
           </div>
 
           {/* Mobile controls */}
           <div className="flex items-center gap-2 lg:hidden">
             <ThemeToggle />
-            <Link to="/cart" className="relative rounded-full border border-stone-300 p-2 text-slate-700 dark:border-stone-700 dark:text-slate-300" aria-label="Cart">
+            <Link
+              to="/cart"
+              className="relative rounded-full border border-stone-300 p-2 text-slate-700 dark:border-stone-700 dark:text-slate-300"
+              aria-label="Cart"
+            >
               <ShoppingBag size={16} />
               {cart.length > 0 && (
                 <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-clay px-1 text-[9px] font-bold text-white">
@@ -162,36 +197,65 @@ export default function Layout({ children }) {
                 </span>
               )}
             </Link>
-            <button className="rounded-full border border-stone-300 p-2 text-slate-700 dark:border-stone-700 dark:text-slate-300" onClick={() => setMenuOpen((prev) => !prev)} aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={menuOpen} aria-controls="mobile-navigation">
+            <button
+              className="rounded-full border border-stone-300 p-2 text-slate-700 dark:border-stone-700 dark:text-slate-300"
+              onClick={() => setMenuOpen((prev) => !prev)}
+              aria-label={
+                menuOpen ? "Close navigation menu" : "Open navigation menu"
+              }
+              aria-expanded={menuOpen}
+              aria-controls="mobile-navigation"
+            >
               <Menu size={18} />
             </button>
           </div>
         </div>
 
-
         {/* Mobile menu dropdown */}
         {menuOpen && (
-          <div id="mobile-navigation" className="border-t border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-[#0b0d16] lg:hidden">
-            <form onSubmit={(e) => { handleHeaderSearch(e); setMenuOpen(false); }} className="mb-4 flex items-center rounded-full border border-stone-300 bg-stone-50 px-3 py-2 dark:border-stone-700 dark:bg-[#141824]">
-              <Search size={16} className="text-slate-400 mr-2" />
+          <div
+            id="mobile-navigation"
+            className="border-t border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-[#0b0d16] lg:hidden"
+          >
+            <form
+              onSubmit={(e) => {
+                handleHeaderSearch(e);
+                setMenuOpen(false);
+              }}
+              className="mb-4 mr-10 flex items-center rounded-full border border-stone-200 bg-stone-50 px-3 py-2 transition-colors dark:border-stone-800 dark:bg-[#0b0d16]"
+            >
               <input
                 type="text"
                 placeholder="Search art, makers..."
                 value={headerSearch}
                 onChange={(e) => setHeaderSearch(e.target.value)}
-                className="w-full bg-transparent text-sm text-slate-800 placeholder-slate-400 outline-none"
+                className="!w-full !border-0 !bg-transparent text-sm text-stone-900 placeholder:text-slate-400 !outline-none !ring-0 focus:!border-0 focus:!bg-transparent focus:!outline-none focus:!ring-0 focus-visible:!outline-none dark:text-stone-100 dark:placeholder:text-slate-500"
               />
-              <button type="submit" className="text-xs font-semibold text-forest">Go</button>
+              <button
+                type="submit"
+                className="shrink-0 text-forest outline-none focus:outline-none dark:text-blue-400"
+              >
+                <Search size={16} />
+              </button>
             </form>
 
             <div className="flex flex-col gap-3 text-sm font-medium text-slate-700">
               {visibleNavItems.map(({ label, to }) => (
-                <NavLink key={to} to={to} onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'text-forest font-semibold' : 'hover:text-forest')}>
+                <NavLink
+                  key={to}
+                  to={to}
+                  onClick={() => setMenuOpen(false)}
+                  className={({ isActive }) =>
+                    isActive ? "text-forest font-semibold" : "hover:text-forest"
+                  }
+                >
                   {label}
                 </NavLink>
               ))}
               <div className="border-t border-stone-100 pt-2 dark:border-stone-800">
-                <p className="text-xs uppercase tracking-wider text-slate-400 mb-2">Categories</p>
+                <p className="text-xs uppercase tracking-wider text-slate-400 mb-2">
+                  Categories
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {headerCategories.map((cat) => (
                     <Link
@@ -205,63 +269,211 @@ export default function Layout({ children }) {
                   ))}
                 </div>
               </div>
-              <NavLink to="/wishlist" onClick={() => setMenuOpen(false)}>Wishlist{wishlist.length ? ` (${wishlist.length})` : ''}</NavLink>
-              <NavLink to="/cart" onClick={() => setMenuOpen(false)}>Cart{cart.length ? ` (${cart.reduce((sum, item) => sum + item.quantity, 0)})` : ''}</NavLink>
-              {user && <NavLink to="/account" onClick={() => setMenuOpen(false)}>My account</NavLink>}
-              {user ? <button onClick={() => { logout(); setMenuOpen(false); }} className="w-fit text-sm text-slate-700 hover:text-forest">Log Out</button> : <><NavLink to="/login" onClick={() => setMenuOpen(false)}>Sign In</NavLink><NavLink to="/signup" onClick={() => setMenuOpen(false)}>Create Account</NavLink></>}
+              <NavLink to="/wishlist" onClick={() => setMenuOpen(false)}>
+                Wishlist{wishlist.length ? ` (${wishlist.length})` : ""}
+              </NavLink>
+              <NavLink to="/cart" onClick={() => setMenuOpen(false)}>
+                Cart
+                {cart.length
+                  ? ` (${cart.reduce((sum, item) => sum + item.quantity, 0)})`
+                  : ""}
+              </NavLink>
+              {user && (
+                <NavLink to="/account" onClick={() => setMenuOpen(false)}>
+                  My account
+                </NavLink>
+              )}
+              {user ? (
+                <button
+                  onClick={() => {
+                    logout();
+                    setMenuOpen(false);
+                  }}
+                  className="w-fit text-sm text-slate-700 hover:text-forest"
+                >
+                  Log Out
+                </button>
+              ) : (
+                <NavLink
+                  to="/login"
+                  onClick={() => setMenuOpen(false)}
+                  className="w-fit rounded-full bg-forest px-5 py-2 text-sm font-semibold text-white dark:bg-blue-600"
+                >
+                  Get Started
+                </NavLink>
+              )}
             </div>
           </div>
         )}
       </header>
 
       <main id="main-content" tabIndex="-1">
-        {cartError && <div className="section-shell pt-4"><p role="alert" className="rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-700">{cartError}</p></div>}
+        {cartError && (
+          <div className="section-shell pt-4">
+            <p
+              role="alert"
+              className="rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-700"
+            >
+              {cartError}
+            </p>
+          </div>
+        )}
         {children}
       </main>
 
       <footer className="border-t border-stone-200 bg-[#f2ebe4] text-slate-800 dark:border-stone-800 dark:bg-[#05060f] dark:text-slate-200">
         <div className="section-shell py-12">
           <div className="mb-10 max-w-md">
-            <div className="font-display text-3xl text-forest dark:text-slate-100">Articraft</div>
-            <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">Discover art. Support artists. Own something handmade.</p>
+            <div className="font-display text-3xl text-forest dark:text-slate-100">
+              Articraft
+            </div>
+            <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
+              Discover art. Support artists. Own something handmade.
+            </p>
           </div>
 
           <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
             <div>
-              <h3 className="font-semibold text-slate-900 dark:text-slate-100">Explore</h3>
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100">
+                Explore
+              </h3>
               <ul className="mt-4 space-y-2.5 text-sm text-slate-600 dark:text-slate-400">
-                <li><Link to="/" className="hover:text-forest dark:hover:text-blue-400">Home</Link></li>
-                <li><Link to="/explore" className="hover:text-forest dark:hover:text-blue-400">Marketplace</Link></li>
-                <li><Link to="/artists" className="hover:text-forest dark:hover:text-blue-400">Artists</Link></li>
-                <li><Link to="/journal" className="hover:text-forest dark:hover:text-blue-400">Journal</Link></li>
+                <li>
+                  <Link
+                    to="/"
+                    className="hover:text-forest dark:hover:text-blue-400"
+                  >
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/explore"
+                    className="hover:text-forest dark:hover:text-blue-400"
+                  >
+                    Marketplace
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/artists"
+                    className="hover:text-forest dark:hover:text-blue-400"
+                  >
+                    Artists
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/journal"
+                    className="hover:text-forest dark:hover:text-blue-400"
+                  >
+                    Journal
+                  </Link>
+                </li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold text-slate-900 dark:text-slate-100">For Artists</h3>
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100">
+                For Artists
+              </h3>
               <ul className="mt-4 space-y-2.5 text-sm text-slate-600 dark:text-slate-400">
-                <li><Link to="/signup" className="hover:text-forest dark:hover:text-blue-400">Become an Artist</Link></li>
-                <li><Link to={user?.role === 'ARTIST' ? '/sell/products' : '/login'} className="hover:text-forest dark:hover:text-blue-400">Sell Products</Link></li>
-                <li><Link to={user?.role === 'ARTIST' ? '/sell' : '/login'} className="hover:text-forest dark:hover:text-blue-400">Artist Dashboard</Link></li>
+                <li>
+                  <Link
+                    to="/signup"
+                    className="hover:text-forest dark:hover:text-blue-400"
+                  >
+                    Become an Artist
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to={user?.role === "ARTIST" ? "/sell/products" : "/login"}
+                    className="hover:text-forest dark:hover:text-blue-400"
+                  >
+                    Sell Products
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to={user?.role === "ARTIST" ? "/sell" : "/login"}
+                    className="hover:text-forest dark:hover:text-blue-400"
+                  >
+                    Artist Dashboard
+                  </Link>
+                </li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold text-slate-900 dark:text-slate-100">Customer Support</h3>
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100">
+                Customer Support
+              </h3>
               <ul className="mt-4 space-y-2.5 text-sm text-slate-600 dark:text-slate-400">
-                <li><Link to="/contact" className="hover:text-forest dark:hover:text-blue-400">Contact Us</Link></li>
-                <li><Link to="/contact" className="hover:text-forest dark:hover:text-blue-400">FAQs</Link></li>
-                <li><Link to="/shipping" className="hover:text-forest dark:hover:text-blue-400">Shipping &amp; Delivery</Link></li>
-                <li><Link to="/refunds" className="hover:text-forest dark:hover:text-blue-400">Returns &amp; Refunds</Link></li>
+                <li>
+                  <Link
+                    to="/contact"
+                    className="hover:text-forest dark:hover:text-blue-400"
+                  >
+                    Contact Us
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/contact"
+                    className="hover:text-forest dark:hover:text-blue-400"
+                  >
+                    FAQs
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/shipping"
+                    className="hover:text-forest dark:hover:text-blue-400"
+                  >
+                    Shipping &amp; Delivery
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/refunds"
+                    className="hover:text-forest dark:hover:text-blue-400"
+                  >
+                    Returns &amp; Refunds
+                  </Link>
+                </li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold text-slate-900 dark:text-slate-100">About Articraft</h3>
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100">
+                About Articraft
+              </h3>
               <ul className="mt-4 space-y-2.5 text-sm text-slate-600 dark:text-slate-400">
-                <li><Link to="/about" className="hover:text-forest dark:hover:text-blue-400">About Us</Link></li>
-                <li><Link to="/privacy" className="hover:text-forest dark:hover:text-blue-400">Privacy Policy</Link></li>
-                <li><Link to="/terms" className="hover:text-forest dark:hover:text-blue-400">Terms &amp; Conditions</Link></li>
+                <li>
+                  <Link
+                    to="/about"
+                    className="hover:text-forest dark:hover:text-blue-400"
+                  >
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/privacy"
+                    className="hover:text-forest dark:hover:text-blue-400"
+                  >
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/terms"
+                    className="hover:text-forest dark:hover:text-blue-400"
+                  >
+                    Terms &amp; Conditions
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
