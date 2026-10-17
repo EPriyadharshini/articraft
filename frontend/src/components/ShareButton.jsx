@@ -28,11 +28,8 @@ export default function ShareButton({ title, url = window.location.href }) {
   if (isDark) {
     return (
       <button type="button" onClick={handleShare} className="share-btn" aria-label="Share this product">
-        <span className="share-label">Share</span>
-        <span className="share-container">
-          {copied ? <Check size={18} /> : <Link2 size={18} />}
-          <Share2 size={18} />
-        </span>
+        {copied ? <Check size={18} /> : <Share2 size={18} />}
+        <span>{copied ? 'Copied!' : 'Share'}</span>
       </button>
     );
   }

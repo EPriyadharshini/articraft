@@ -10,14 +10,99 @@
 
 html[data-theme='dark'] body { background: #05060f; color: #f8fafc; }
 html[data-theme='dark'] .bg-white\/90 { background-color: rgba(11, 13, 22, 0.95) !important; border-color: rgba(59, 130, 246, 0.3) !important; }
+html[data-theme='dark'] .bg-white\/80 { background-color: rgba(15, 23, 42, 0.8) !important; border-color: rgba(59, 130, 246, 0.3) !important; color: #f8fafc !important; }
 html[data-theme='dark'] .bg-amber-100 { background-color: rgba(30, 58, 138, 0.4) !important; color: #60a5fa !important; }
-html[data-theme='dark'] .bg-white, html[data-theme='dark'] .bg-stone-50, html[data-theme='dark'] .bg-\[\#fffaf5\], html[data-theme='dark'] .bg-\[\#f2ebe4\], html[data-theme='dark'] .bg-\[\#f4efe8\], html[data-theme='dark'] .bg-\[\#f5f1eb\] { background-color: #0b0d16; }
-html[data-theme='dark'] .text-slate-900, html[data-theme='dark'] .text-slate-800 { color: #f8fafc; }
-html[data-theme='dark'] .text-slate-700, html[data-theme='dark'] .text-slate-600, html[data-theme='dark'] .text-slate-500 { color: #cbd5e1; }
-html[data-theme='dark'] .border-stone-200, html[data-theme='dark'] .border-stone-300 { border-color: #1e293b; }
-html[data-theme='dark'] input, html[data-theme='dark'] textarea, html[data-theme='dark'] select { background-color: #0b0d16 !important; color: #f8fafc; }
+html[data-theme='dark'] .bg-white,
+html[data-theme='dark'] .bg-stone-50,
+html[data-theme='dark'] .bg-slate-50,
+html[data-theme='dark'] .bg-\[\#fffaf5\],
+html[data-theme='dark'] .bg-\[\#f2ebe4\],
+html[data-theme='dark'] .bg-\[\#f4efe8\],
+html[data-theme='dark'] .bg-\[\#f5f1eb\] { background-color: #0b0d16; }
 
-/* Forest green -> Royal Glass Blue in dark mode */
+/* View buttons and similar light-accent pills in dark mode */
+html[data-theme='dark'] .bg-\[\#f2ece4\] {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
+}
+html[data-theme='dark'] .hover\:bg-\[\#e9e0d7\]:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+}
+
+/* Text hierarchy in dark mode */
+html[data-theme='dark'] .text-slate-900,
+html[data-theme='dark'] .text-slate-800 { color: #f8fafc; }
+html[data-theme='dark'] .text-slate-700 { color: #f1f5f9; }
+html[data-theme='dark'] .text-slate-600 { color: #e2e8f0; }
+html[data-theme='dark'] .text-slate-500 { color: #cbd5e1; }
+
+/* Headings with text-forest or font-display in dark mode: crisp, high contrast */
+html[data-theme='dark'] h1.text-forest,
+html[data-theme='dark'] h2.text-forest,
+html[data-theme='dark'] h3.text-forest,
+html[data-theme='dark'] h4.text-forest,
+html[data-theme='dark'] .font-display.text-forest {
+  color: #f8fafc !important;
+}
+
+/* Eyebrow / tracking labels in dark mode */
+html[data-theme='dark'] .tracking-\[0\.25em\],
+html[data-theme='dark'] .tracking-\[0\.2em\] {
+  color: #93c5fd !important;
+}
+
+/* Ratings */
+html[data-theme='dark'] .text-amber-600,
+html[data-theme='dark'] .text-amber-700 {
+  color: #fbbf24 !important;
+}
+
+/* Borders & rings in dark mode */
+html[data-theme='dark'] .border-stone-200,
+html[data-theme='dark'] .border-stone-300 { border-color: #1e293b; }
+html[data-theme='dark'] .ring-stone-200 { --tw-ring-color: #334155; }
+
+/* Inputs, textareas, selects */
+html[data-theme='dark'] input,
+html[data-theme='dark'] textarea,
+html[data-theme='dark'] select {
+  background-color: #0b0d16 !important;
+  color: #f8fafc;
+}
+html[data-theme='dark'] input::placeholder,
+html[data-theme='dark'] textarea::placeholder {
+  color: #64748b;
+}
+
+/* Alert / notification banners in dark mode */
+html[data-theme='dark'] .bg-rose-50 {
+  background-color: rgba(159, 18, 57, 0.2) !important;
+  color: #fecdd3 !important;
+  border-color: rgba(244, 63, 94, 0.3) !important;
+}
+html[data-theme='dark'] .text-rose-700,
+html[data-theme='dark'] .text-rose-600 {
+  color: #fda4af !important;
+}
+html[data-theme='dark'] .border-rose-200 {
+  border-color: rgba(244, 63, 94, 0.3) !important;
+}
+html[data-theme='dark'] .bg-amber-50 {
+  background-color: rgba(217, 119, 6, 0.2) !important;
+  color: #fde68a !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+}
+html[data-theme='dark'] .text-amber-900,
+html[data-theme='dark'] .text-amber-800 {
+  color: #fef3c7 !important;
+}
+html[data-theme='dark'] .border-amber-200 {
+  border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+/* Forest green -> Royal Glass Blue in dark mode for accents, prices, buttons */
 html[data-theme='dark'] .bg-forest { background-color: #2563eb; }
 html[data-theme='dark'] .text-forest { color: #60a5fa; }
 html[data-theme='dark'] .border-forest { border-color: #3b82f6; }
@@ -241,49 +326,50 @@ html[data-theme='dark'] .radar-loader span::before {
   100% { transform: rotate(360deg); }
 }
 
+html[data-theme='dark'] .wishlist-btn,
 html[data-theme='dark'] .share-btn {
-  height: 3em;
-  width: 11em;
-  border: none;
-  border-radius: 999px;
-  background-color: rgba(59, 130, 246, 0.1);
-  box-shadow: rgba(59, 130, 246, 0.2) 0 0 0 1px inset;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-html[data-theme='dark'] .share-btn .share-label {
-  z-index: 1;
-  display: inline-block;
-  background-color: #2563eb;
-  height: 2.3em;
-  width: 9em;
-  border-radius: 999px;
-  color: #fff;
-  line-height: 2.3em;
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 1px;
-  transition: all 0.5s;
-}
-html[data-theme='dark'] .share-btn .share-container {
-  z-index: 0;
-  width: 0;
-  position: relative;
-  display: flex;
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  transform: translateY(-38px);
-  transition: all 0.4s;
+  gap: 0.5rem;
+  height: 52px;
+  padding: 0 24px;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 999px;
+  box-sizing: border-box;
+  white-space: nowrap;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+html[data-theme='dark'] .wishlist-btn:not(.is-active),
+html[data-theme='dark'] .share-btn {
+  background-color: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  color: #f8fafc;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+html[data-theme='dark'] .wishlist-btn:not(.is-active):hover,
+html[data-theme='dark'] .share-btn:hover {
+  background-color: rgba(37, 99, 235, 0.15);
+  border-color: rgba(96, 165, 250, 0.5);
   color: #93c5fd;
 }
-html[data-theme='dark'] .share-btn .share-container svg { padding: 0 6px; }
-html[data-theme='dark'] .share-btn:hover .share-label { width: 0; }
-html[data-theme='dark'] .share-btn:hover .share-container { z-index: 2; width: 100%; }
+
+html[data-theme='dark'] .wishlist-btn.is-active {
+  background-color: #c06d4d !important;
+  border-color: #c06d4d !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(192, 109, 77, 0.4) !important;
+}
+
 
 html[data-theme='dark'] .hero-heading {
-  color: transparent;
-  background: linear-gradient(100deg, #93c5fd 0%, #60a5fa 45%, #2563eb 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  text-shadow: none;
+  color: transparent !important;
+  background: linear-gradient(100deg, #93c5fd 0%, #60a5fa 45%, #2563eb 100%) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  text-shadow: none !important;
 }

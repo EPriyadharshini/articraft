@@ -17,7 +17,8 @@ import adminRoutes from './routes/adminRoutes.js';
 import { errorHandler, notFound } from './middleware/error.js';
 import { successResponse } from './utils/apiResponse.js';
 import { testCloudinary } from "./utils/cloudinary.js";
-
+import dns from 'node:dns';
+dns.setDefaultResultOrder('ipv4first');
 validateEnvironment();
 
 const app = express();
@@ -25,7 +26,7 @@ const app = express();
 app.set('trust proxy', 1);
 app.use(helmet());
 app.use(cors({ origin: config.clientUrl, credentials: true }));
-app.use(rateLimit({ windowMs: 15 * 60 * 1000, limit: 300, standardHeaders: 'draft-7', legacyHeaders: false }));
+app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 300, standardHeaders: 'draft-7', legacyHeaders: false }));
 app.post('/api/orders/webhook', express.raw({ type: 'application/json' }), razorpayWebhook);
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));

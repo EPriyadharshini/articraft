@@ -102,3 +102,18 @@ export const testCloudinary = async () => {
     });
   }
 };
+
+ export  const uploadWithRetry = async (buffer, options, tries = 3) => {
+     for (let i = 1; i <= tries; i++) {
+       try {
+         return await new Promise((resolve, reject) => {
+           cloudinary.uploader.upload_stream(options, (err, result) =>
+             err ? reject(err) : resolve(result)
+           ).end(buffer);
+         });
+       } catch (err) {
+         if (i === tries) throw err;
+         await new Promise((r) => setTimeout(r, 1000 * i));
+       }
+     }
+   };

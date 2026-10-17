@@ -91,7 +91,7 @@ export default function ProductPage() {
                 {product.stock <= 0 ? 'Out of stock' : 'Add to Cart'}
               </span>
             </button>
-            <button onClick={() => toggleWishlist(product.id)} aria-label={`${wishlist.includes(product.id) ? 'Remove' : 'Add'} ${product.name} ${wishlist.includes(product.id) ? 'from' : 'to'} wishlist`} className={`flex items-center gap-2 rounded-full border px-6 py-3 font-medium ${wishlist.includes(product.id) ? 'border-clay bg-clay text-white' : 'border-stone-300 bg-white text-slate-700'}`}>
+            <button onClick={() => toggleWishlist(product.id)} aria-label={`${wishlist.includes(product.id) ? 'Remove' : 'Add'} ${product.name} ${wishlist.includes(product.id) ? 'from' : 'to'} wishlist`} className={`wishlist-btn flex items-center gap-2 rounded-full border px-6 py-3 font-medium ${wishlist.includes(product.id) ? 'border-clay bg-clay text-white is-active' : 'border-stone-300 bg-white text-slate-700'}`}>
               <Heart size={18} fill={wishlist.includes(product.id) ? 'currentColor' : 'none'} />
               Add to wishlist
             </button>
