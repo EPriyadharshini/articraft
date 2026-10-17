@@ -41,6 +41,14 @@ export default function Layout({ children }) {
     if (headerCategory && headerCategory !== 'All') params.set('category', headerCategory);
     navigate(`/explore?${params.toString()}`);
   };
+  
+    const handleCategoryChange = (value) => {
+    setHeaderCategory(value);
+    const params = new URLSearchParams();
+    if (headerSearch.trim()) params.set('search', headerSearch.trim());
+    if (value && value !== 'All') params.set('category', value);
+    navigate(`/explore?${params.toString()}`);
+  };
 
   return (
     <div className="min-h-screen bg-[#fffaf5] text-slate-900 dark:bg-[#05060f] dark:text-slate-100">
@@ -62,7 +70,7 @@ export default function Layout({ children }) {
             <select
               aria-label="Search category"
               value={headerCategory}
-              onChange={(e) => setHeaderCategory(e.target.value)}
+              onChange={(e) => handleCategoryChange(e.target.value)}
               className="h-10 rounded-l-full border-r border-stone-200 bg-stone-50 px-3 text-xs font-semibold text-slate-700 outline-none hover:bg-stone-100 dark:border-stone-800 dark:bg-[#141824] dark:text-slate-300"
             >
               <option value="All">All Categories</option>
