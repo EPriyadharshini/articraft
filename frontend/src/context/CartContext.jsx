@@ -58,9 +58,9 @@ export function CartProvider({ children }) {
   const addToCart = async (product) => {
     setError("");
 
-    // Guest users cannot add to cart
+    // Redirect guest users to login
     if (user?.role !== "CUSTOMER") {
-      setError("Please login to add items to your cart.");
+      window.location.href = "/login";
       return;
     }
 
@@ -78,7 +78,7 @@ export function CartProvider({ children }) {
       setError(message);
       throw requestError;
     }
-  };
+  };;
 
   const updateQuantity = async (id, quantity) => {
     setError("");

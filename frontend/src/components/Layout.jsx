@@ -153,7 +153,7 @@ export default function Layout({ children }) {
         </div>
 
         {/* Secondary Category Navigation Bar — Saatchi Art inspired */}
-        <div className="hidden border-t border-stone-200/80 bg-white/50 py-2 dark:border-stone-800/80 dark:bg-[#0b0d16]/50 lg:block">
+        {/* <div className="hidden border-t border-stone-200/80 bg-white/50 py-2 dark:border-stone-800/80 dark:bg-[#0b0d16]/50 lg:block">
           <div className="section-shell flex items-center justify-between text-xs font-medium text-slate-600">
             <div className="flex items-center gap-6">
               <Link to="/explore" className="font-semibold text-forest hover:underline">Explore All Marketplace</Link>
@@ -169,7 +169,7 @@ export default function Layout({ children }) {
               <Link to="/artists" className="hover:text-forest">Discover 50+ Makers</Link>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Mobile menu dropdown */}
         {menuOpen && (

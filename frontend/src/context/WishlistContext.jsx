@@ -48,18 +48,30 @@ export function WishlistProvider({ children }) {
       syncWishlist().catch(console.error);
     } else {
       // Logged out → don't show wishlist items
-      setWishlist([]);
+      setWishlist(readLocal());
+      syncedUser.current = "";
     }
   }, [user]);
 
-  const toggleWishlist = async (productId) => {
-    const exists = wishlist.includes(productId);
-    if (user?.role === 'CUSTOMER') {
-      if (exists) await api.delete(`/wishlist/${productId}`);
-      else await api.post(`/wishlist/${productId}`);
-    }
-    setWishlist((items) => (exists ? items.filter((id) => id !== productId) : [...items, productId]));
-  };
+  
+const toggleWishlist = async (productId) => {
+  if (user?.role !== "CUSTOMER") {
+    return;
+  }
+
+  const exists = wishlist.includes(productId);
+
+  if (exists) {
+    await api.delete(`/wishlist/${productId}`);
+    setWishlist((items) => items.filter((id) => id !== productId));
+  } else {
+    await api.post(`/wishlist/${productId}`);
+    setWishlist((items) =>
+      items.includes(productId) ? items : [...items, productId],
+    );
+  }
+};
+
 
   const value = useMemo(() => ({ wishlist, toggleWishlist }), [wishlist, user]);
   return <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>;
