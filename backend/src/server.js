@@ -45,10 +45,14 @@ app.use('/api/admin', adminRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
-await testCloudinary();
+
 const start = async () => {
   await connectDB();
-  app.listen(config.port, () => console.log(`Server running on port ${config.port}`));
+  app.listen(config.port, () => {
+    console.log(`Server running on port ${config.port}`);
+    // Non-blocking background connectivity verification for external services
+    testCloudinary().catch((err) => console.warn('Non-blocking Cloudinary verification error:', err.message));
+  });
 };
 
 start().catch((error) => {

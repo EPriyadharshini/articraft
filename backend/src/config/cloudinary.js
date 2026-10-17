@@ -8,7 +8,5 @@ import { v2 as cloudinary } from 'cloudinary';
      timeout: 120000,
     
    });
-   cloudinary.api.ping().then(console.log).catch(console.error);
-
 
 export default cloudinary;

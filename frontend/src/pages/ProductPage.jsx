@@ -98,8 +98,19 @@ export default function ProductPage() {
             <ShareButton title={product.name} />
           </div>
 
-          <div className="grid gap-4 rounded-[2rem] border border-stone-200 bg-white p-6 shadow-soft">
-            <div className="flex items-center justify-between text-sm text-slate-600"><span>Made by</span> <Link to={`/artist/${product.artistId || 'user-1'}`} className="font-semibold text-forest">{product.artist}</Link></div>
+          <div className="grid gap-4 rounded-[2rem] border border-stone-200 bg-white p-6 shadow-soft dark:border-stone-800 dark:bg-[#0f111a]">
+            <div className="flex items-center justify-between text-sm text-slate-600 dark:text-slate-300">
+              <span>Made by</span>
+              {product.artistId ? (
+                <Link to={`/artist/${product.artistId}`} className="font-semibold text-forest hover:underline dark:text-blue-400">
+                  {product.artist}
+                </Link>
+              ) : (
+                <Link to="/artists" className="font-semibold text-forest hover:underline dark:text-blue-400">
+                  {product.artist}
+                </Link>
+              )}
+            </div>
             <div className="flex items-center justify-between text-sm text-slate-600"><span>Materials</span> <span>{product.material}</span></div>
             <div className="flex items-center justify-between text-sm text-slate-600"><span>Dimensions</span> <span>{product.dimensions}</span></div>
             <div className="flex items-center justify-between text-sm text-slate-600"><span>Stock</span> <span>{product.stock} available</span></div>

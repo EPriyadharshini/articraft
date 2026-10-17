@@ -1,192 +1,470 @@
-import { ArrowRight, ArrowUpRight, CheckCircle2, Palette, Search, ShoppingCart, Sparkles, Star, TrendingUp } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ArrowRight, ArrowUpRight, CheckCircle2, Filter, Heart, Palette, Search, ShieldCheck, ShoppingBag, ShoppingCart, Sparkles, Star, TrendingUp, Truck } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import api from '../services/api';
 import { motion } from 'framer-motion';
 import { formatINR } from '../utils/currency';
-
+import ProductCard from '../components/ProductCard';
 
 const categories = [
-  { name: 'Textiles', image: 'https://images.unsplash.com/photo-1528458876861-544fd1761a91?auto=format&fit=crop&w=900&q=80' },
-  { name: 'Ceramics', image: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=900&q=80' },
-  { name: 'Jewelry', image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=900&q=80' },
-  { name: 'Art Prints', image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=900&q=80' },
+  { name: 'Textiles', description: 'Handwoven silk, linen & tapestry', image: 'https://images.unsplash.com/photo-1528458876861-544fd1761a91?auto=format&fit=crop&w=900&q=80' },
+  { name: 'Ceramics', description: 'Functional pottery & sculptural stoneware', image: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=900&q=80' },
+  { name: 'Jewelry', description: 'Handcrafted silver, gold & gemstones', image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=900&q=80' },
+  { name: 'Art Prints', description: 'Botanical, abstract & archival editions', image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=900&q=80' },
 ];
 
-const features = [
-  'Handmade collections',
-  'Independent makers',
-  'Checkout and order tracking',
+const priceRanges = [
+  { label: 'Under ₹50', min: 0, max: 50 },
+  { label: '₹50 – ₹150', min: 50, max: 150 },
+  { label: '₹150 – ₹300', min: 150, max: 300 },
+  { label: '₹300+', min: 300, max: 10000 },
+];
+
+const styles = ['Abstract', 'Minimalist', 'Botanical', 'Boho', 'Traditional'];
+
+const whyShopFeatures = [
+  {
+    icon: Palette,
+    title: 'Authentic Handmade Art',
+    description: 'Every creation is made directly by verified independent artists and artisanal makers.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Secure Payments via Razorpay',
+    description: 'Server-verified checkout with transparent order receipts and protected transactions.',
+  },
+  {
+    icon: Truck,
+    title: 'Tracked Delivery & Transparent Shipping',
+    description: 'Free shipping on orders above ₹120 with end-to-end seller order status tracking.',
+  },
+  {
+    icon: Heart,
+    title: 'Directly Support Creators',
+    description: 'Your patronage directly funds artists, sustaining independent craftsmanship.',
+  },
 ];
 
 export default function HomePage() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const [categoriesList, setCategoriesList] = useState(['All', 'Textiles', 'Ceramics', 'Jewelry', 'Art Prints']);
   const [featuredArtists, setFeaturedArtists] = useState([]);
+  const [reviews, setReviews] = useState([]);
+
+  // Search & filter state in Hero
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedPrice, setSelectedPrice] = useState('');
+  const [selectedStyle, setSelectedStyle] = useState('');
+
+  // Collections tab
+  const [collectionTab, setCollectionTab] = useState('trending');
 
   useEffect(() => {
-    const load = async () => {
+    let active = true;
+
+    const loadContent = async () => {
       try {
-        const [productsRes, artistsRes] = await Promise.all([
-          api.get('/products'),
+        const [productsRes, artistsRes, categoriesRes] = await Promise.all([
+          api.get('/products?limit=12'),
           api.get('/users/artists'),
+          api.get('/products/categories').catch(() => ({ data: { data: { categories: [] } } })),
         ]);
-        setProducts((productsRes.data.data.products || []).slice(0, 4));
-        setFeaturedArtists((artistsRes.data.data.artists || []).slice(0, 3));
+
+        if (!active) return;
+
+        const allProducts = productsRes.data?.data?.products || [];
+        setProducts(allProducts);
+
+        const allArtists = artistsRes.data?.data?.artists || [];
+        setFeaturedArtists(allArtists);
+
+        if (categoriesRes.data?.data?.categories?.length) {
+          setCategoriesList(categoriesRes.data.data.categories);
+        }
+
+        // Fetch genuine customer reviews from products with reviews
+        const reviewedProduct = allProducts.find((p) => p.reviewCount > 0);
+        if (reviewedProduct) {
+          try {
+            const revRes = await api.get(`/reviews/product/${reviewedProduct.id}`);
+            if (active && revRes.data?.data?.reviews?.length) {
+              setReviews(revRes.data.data.reviews.slice(0, 3));
+            }
+          } catch {
+            // Reviews remain empty if none exist yet
+          }
+        }
       } catch (error) {
         console.error('Error loading homepage content', error);
       }
     };
 
-    load();
+    loadContent();
+    return () => {
+      active = false;
+    };
   }, []);
 
+  const handleHeroSearch = (e) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (searchQuery.trim()) params.set('search', searchQuery.trim());
+    if (selectedCategory && selectedCategory !== 'All') params.set('category', selectedCategory);
+    if (selectedPrice) {
+      const range = priceRanges.find((r) => r.label === selectedPrice);
+      if (range) {
+        if (range.min !== undefined) params.set('minPrice', range.min);
+        if (range.max !== undefined) params.set('maxPrice', range.max);
+      }
+    }
+    if (selectedStyle) {
+      const combined = searchQuery.trim() ? `${searchQuery.trim()} ${selectedStyle}` : selectedStyle;
+      params.set('search', combined);
+    }
+    navigate(`/explore?${params.toString()}`);
+  };
+
+  // Filter products for curated collections
+  const curatedProducts = () => {
+    if (collectionTab === 'trending') {
+      return [...products].sort((a, b) => (b.soldCount || 0) - (a.soldCount || 0)).slice(0, 4);
+    }
+    if (collectionTab === 'new') {
+      return [...products].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)).slice(0, 4);
+    }
+    if (collectionTab === 'top-rated') {
+      return [...products].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 4);
+    }
+    return products.slice(0, 4);
+  };
+
+  const risingArtists = featuredArtists.slice(3, 7);
+  const spotlightArtists = featuredArtists.slice(0, 3);
+  const featuredProducts = products.slice(0, 4);
+
   return (
-    <div>
-      <section className="section-shell grid gap-12 py-16 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:py-20">
-        <div>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800">
-            <Sparkles size={15} />
-            Artisan marketplace
-          </motion.div>
-          <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }} className="hero-heading mt-6 max-w-xl font-display text-5xl leading-tight text-forest sm:text-6xl">
-            Discover Art. Support Artists. Own Something Handmade.
-          </motion.h1>
-          <motion.p initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mt-5 max-w-lg text-lg text-slate-600">
-            Shop pieces from independent artists, artisans, and makers.
-          </motion.p>
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14 }} className="mt-8 flex flex-wrap items-center gap-4">
-            <Link to="/explore" className="inline-flex items-center gap-2 rounded-full bg-forest px-6 py-3 font-medium text-white shadow-soft transition hover:bg-emerald-900">
-              Shop the collection <ArrowRight size={18} />
-            </Link>
-            <Link to="/artists" className="inline-flex items-center gap-2 rounded-full border border-stone-300 bg-white px-6 py-3 font-medium text-slate-700 transition hover:border-forest hover:text-forest">
-              Meet the makers
-            </Link>
-          </motion.div>
-          <div className="mt-8 flex flex-wrap gap-5 text-sm text-slate-600">
-            {features.map((feature) => (
-              <div key={feature} className="flex items-center gap-2">
-                <CheckCircle2 size={16} className="text-emerald-600" />
-                {feature}
+    <div className="w-full">
+      {/* 1. Large Editorial Art Presentation Hero — Saatchi Art inspired spacious 2-column layout */}
+      <section className="border-b border-stone-200/60 bg-[#fffaf5] py-12 lg:py-20 dark:border-stone-800/80 dark:bg-[#05060f]">
+        <div className="section-shell grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div className="space-y-6 lg:pr-6">
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 rounded-full border border-amber-300/80 bg-amber-50/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-amber-900 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-300">
+              <Sparkles size={14} /> Curated Artisan Marketplace
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 }}
+              className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-normal leading-[1.12] tracking-tight text-forest dark:text-white"
+            >
+              Discover Art.<br />
+              <span className="italic font-serif">Support Artists.</span><br />
+              Own Something Handmade.
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="max-w-xl text-base sm:text-lg text-slate-600 leading-relaxed dark:text-slate-300"
+            >
+              Explore one-of-a-kind original artworks, ceramic vessels, handwoven tapestries, and limited-edition prints crafted by independent creators across the globe.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="flex flex-wrap items-center gap-4 pt-2"
+            >
+              <Link to="/explore" className="inline-flex items-center gap-2.5 rounded-full bg-forest px-8 py-3.5 text-sm font-semibold text-white shadow-soft transition hover:bg-emerald-900">
+                Shop the Collection <ArrowRight size={17} />
+              </Link>
+              <Link to="/artists" className="inline-flex items-center gap-2.5 rounded-full border border-stone-300 bg-white px-7 py-3.5 text-sm font-semibold text-slate-800 transition hover:border-forest hover:text-forest dark:border-stone-700 dark:bg-[#0b0d16] dark:text-slate-200">
+                Meet the Makers
+              </Link>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="flex flex-wrap gap-6 pt-4 text-xs font-medium text-slate-500 dark:text-slate-400"
+            >
+              <span className="flex items-center gap-1.5"><CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400" /> Direct from Independent Artists</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400" /> Secure Razorpay Verification</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400" /> Tracked Delivery</span>
+            </motion.div>
+          </div>
+
+          {/* Hero Visual Presentation — Expansive Aspect Ratio */}
+          <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.18 }} className="relative">
+            <div className="relative overflow-hidden rounded-[2.5rem] border border-stone-200/80 bg-white p-3 shadow-soft dark:border-stone-800 dark:bg-[#0b0d16]">
+              <img
+                src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1400&q=85"
+                alt="Artisan ceramic craft showcase"
+                className="h-[460px] sm:h-[540px] xl:h-[620px] w-full rounded-[2rem] object-cover"
+              />
+              <div className="absolute inset-x-6 bottom-6 flex items-center justify-between rounded-2xl border border-white/60 bg-white/90 p-4 shadow-lg backdrop-blur-md dark:border-stone-800/80 dark:bg-[#0b0d16]/90">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 text-amber-800 dark:bg-blue-900/40 dark:text-blue-300">
+                    <TrendingUp size={20} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Curator Spotlight</p>
+                    <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">Handcrafted ceramics, tapestries &amp; sculptures</p>
+                  </div>
+                </div>
+                <Link to="/explore" className="hidden sm:inline-flex rounded-full bg-forest px-4 py-2 text-xs font-semibold text-white transition hover:bg-emerald-900">
+                  Explore
+                </Link>
               </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 2. Featured Artwork Section */}
+      <section className="border-b border-stone-200/60 bg-white py-16 dark:border-stone-800/80 dark:bg-[#080a12]">
+        <div className="section-shell">
+          <div className="mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.25em] font-semibold text-slate-500 dark:text-blue-400">Featured Artwork</p>
+              <h2 className="mt-2 font-display text-3xl sm:text-4xl text-forest dark:text-slate-100">Discover Handcrafted Stories</h2>
+            </div>
+            <Link to="/explore" className="inline-flex items-center gap-2 text-sm font-semibold text-forest hover:underline dark:text-blue-400">
+              Browse all artworks <ArrowUpRight size={18} />
+            </Link>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id || product._id} product={product} />
             ))}
           </div>
         </div>
-
-        <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.18 }} className="relative">
-          <div className="overflow-hidden rounded-[2rem] border border-stone-200 bg-white p-4 shadow-soft">
-            <img src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1200&q=80" alt="Artisan handmade pottery craft" className="h-[620px] w-full rounded-[1.5rem] object-cover" />
-          </div>
-          <div className="absolute -bottom-6 left-6 rounded-2xl border border-stone-200 bg-white/90 p-4 shadow-soft backdrop-blur dark:border-stone-800 dark:bg-[#0b0d16]/90">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-700">
-                <TrendingUp size={22} />
-              </div>
-              <div>
-                <div className="text-sm text-slate-500">This week</div>
-                <div className="text-xl font-semibold text-slate-800">Explore handmade work</div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
       </section>
 
+      {/* 2. Shop by Category Section */}
       <section className="bg-[#f4efe8] py-16">
         <div className="section-shell">
           <div className="mb-8 flex items-end justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.25em] text-slate-500">Featured artwork</p>
-              <h2 className="mt-3 font-display text-4xl text-forest">Discover handcrafted stories</h2>
+              <p className="text-sm uppercase tracking-[0.25em] text-slate-500">Browse by medium</p>
+              <h2 className="mt-2 font-display text-4xl text-forest">Shop by Category</h2>
             </div>
-            <Link to="/explore" className="hidden items-center gap-2 text-sm font-medium text-slate-700 md:flex">
-              Explore more <ArrowUpRight size={18} />
+            <Link to="/explore" className="hidden items-center gap-2 text-sm font-medium text-slate-700 hover:text-forest md:flex">
+              All categories <ArrowUpRight size={18} />
             </Link>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-            {products.map((product) => (
-              <div key={product.id} className="overflow-hidden rounded-[1.75rem] border border-stone-200 bg-white shadow-soft">
-                <img src={product.images?.[0]} alt={product.name} className="h-72 w-full object-cover" />
-                <div className="p-5">
-                  <div className="mb-2 flex items-center justify-between text-sm text-slate-500">
-                    <span>{product.category}</span>
-                    <span className="flex items-center gap-1 text-amber-600"><Star size={14} fill="currentColor" /> {product.rating}</span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-slate-800">{product.name}</h3>
-                  <p className="mt-1 text-sm text-slate-500">by {product.artist}</p>
-                  <div className="mt-4 flex items-center justify-between">
-                    <span className="text-2xl font-bold text-forest">{formatINR(product.price)}</span>
-                    <Link to={`/product/${product.id}`} className="rounded-full bg-[#f2ece4] px-4 py-2 text-sm font-medium text-slate-700 hover:bg-[#e9e0d7]">View</Link>
-                  </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {categories.map(({ name, description, image }) => (
+              <Link
+                key={name}
+                to={`/explore?category=${encodeURIComponent(name)}`}
+                className="group relative overflow-hidden rounded-[2rem] border border-stone-200 bg-white shadow-soft transition hover:-translate-y-1"
+              >
+                <div className="overflow-hidden">
+                  <img src={image} alt={name} className="h-64 w-full object-cover transition duration-500 group-hover:scale-105" />
                 </div>
-              </div>
+                <div className="p-5">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-semibold text-slate-800 group-hover:text-forest">{name}</h3>
+                    <ArrowRight size={16} className="text-slate-400 transition group-hover:translate-x-1 group-hover:text-forest" />
+                  </div>
+                  <p className="mt-1 text-xs text-slate-500">{description}</p>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
+      {/* 3. Curated Collections Section */}
       <section className="section-shell py-16">
-        <div className="mb-8 text-center">
-          <p className="text-sm uppercase tracking-[0.25em] text-slate-500">Explore categories</p>
-          <h2 className="mt-3 font-display text-4xl text-forest">Find your next favorite piece</h2>
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm uppercase tracking-[0.25em] text-slate-500">Curated for you</p>
+            <h2 className="mt-2 font-display text-4xl text-forest">Art Collections</h2>
+          </div>
+
+          {/* Tab selector */}
+          <div className="flex flex-wrap items-center gap-2 rounded-full border border-stone-200 bg-stone-100 p-1">
+            <button
+              onClick={() => setCollectionTab('trending')}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+                collectionTab === 'trending' ? 'bg-forest text-white' : 'text-slate-600 hover:text-forest'
+              }`}
+            >
+              Trending Art
+            </button>
+            <button
+              onClick={() => setCollectionTab('top-rated')}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+                collectionTab === 'top-rated' ? 'bg-forest text-white' : 'text-slate-600 hover:text-forest'
+              }`}
+            >
+              Top Rated
+            </button>
+            <button
+              onClick={() => setCollectionTab('new')}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+                collectionTab === 'new' ? 'bg-forest text-white' : 'text-slate-600 hover:text-forest'
+              }`}
+            >
+              New Arrivals
+            </button>
+          </div>
         </div>
+
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {categories.map(({ name, image }) => (
-            <div key={name} className="group relative overflow-hidden rounded-[2rem]">
-              <img src={image} alt={name} className="h-80 w-full object-cover transition duration-500 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-6 text-white">
-                <p className="text-2xl font-semibold">{name}</p>
-              </div>
-            </div>
+          {curatedProducts().map((product) => (
+            <ProductCard key={product.id || product._id} product={product} />
           ))}
         </div>
       </section>
 
+      {/* 4. Featured Artists Spotlight */}
       <section className="bg-[#f5f1eb] py-16">
         <div className="section-shell">
-          <div className="mb-8 flex items-center justify-between">
+          <div className="mb-8 flex items-end justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.25em] text-slate-500">Featured artists</p>
-              <h2 className="mt-3 font-display text-4xl text-forest">Meet the makers</h2>
+              <p className="text-sm uppercase tracking-[0.25em] text-slate-500">Master creators</p>
+              <h2 className="mt-2 font-display text-4xl text-forest">Featured Artists</h2>
             </div>
+            <Link to="/artists" className="hidden items-center gap-2 text-sm font-medium text-slate-700 hover:text-forest md:flex">
+              View all artists <ArrowUpRight size={18} />
+            </Link>
           </div>
+
           <div className="grid gap-6 md:grid-cols-3">
-            {featuredArtists.map((artist) => (
-              <div key={artist.id} className="rounded-[2rem] border border-stone-200 bg-white p-6 shadow-soft">
-                <img src={artist.avatar} alt={artist.name} className="h-52 w-full rounded-[1.5rem] object-cover" />
+            {spotlightArtists.map((artist) => (
+              <div key={artist.id || artist._id} className="group rounded-[2rem] border border-stone-200 bg-white p-6 shadow-soft transition hover:-translate-y-1 dark:border-stone-800 dark:bg-[#0f111a]">
+                <Link to={`/artist/${artist.id || artist._id}`} className="block overflow-hidden rounded-[1.5rem]">
+                  <img src={artist.avatar} alt={artist.name} className="h-56 w-full object-cover transition duration-500 group-hover:scale-105" />
+                </Link>
                 <div className="mt-5">
-                  <h3 className="text-2xl font-semibold text-slate-800">{artist.name}</h3>
-                  <p className="mt-2 text-sm text-slate-500">{artist.specialization}</p>
-                  <div className="mt-4 flex items-center justify-between text-sm text-slate-600">
+                  <Link to={`/artist/${artist.id || artist._id}`} className="block">
+                    <h3 className="text-2xl font-semibold text-slate-800 transition hover:text-forest dark:text-slate-100 dark:hover:text-blue-400">{artist.name}</h3>
+                  </Link>
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{artist.specialization}</p>
+                  <div className="mt-4 flex items-center justify-between text-sm text-slate-600 dark:text-slate-400">
                     <span>{artist.location}</span>
-                    <span className="flex items-center gap-1 text-amber-600"><Star size={14} fill="currentColor" /> {artist.rating}</span>
+                    <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400"><Star size={14} fill="currentColor" /> {artist.rating}</span>
                   </div>
-                  <Link to={`/artist/${artist.id}`} className="mt-5 inline-flex items-center gap-2 rounded-full bg-forest px-4 py-2 text-sm font-medium text-white hover:bg-emerald-900">
-                    View profile <ArrowRight size={15} />
+                  <Link to={`/artist/${artist.id || artist._id}`} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-forest px-4 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-900 dark:bg-blue-600 dark:hover:bg-blue-700">
+                    View Portfolio <ArrowRight size={15} />
                   </Link>
                 </div>
               </div>
             ))}
           </div>
+
+          {/* 4b. Rising Artists Sub-section */}
+          {risingArtists.length > 0 && (
+            <div className="mt-14 border-t border-stone-200 pt-10">
+              <div className="mb-6 flex items-center justify-between">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Emerging talent</p>
+                  <h3 className="text-2xl font-semibold text-slate-800">Rising Artists</h3>
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {risingArtists.map((artist) => (
+                  <Link
+                    key={artist.id || artist._id}
+                    to={`/artist/${artist.id || artist._id}`}
+                    className="flex items-center gap-3.5 rounded-2xl border border-stone-200 bg-white p-3.5 shadow-soft transition hover:border-forest"
+                  >
+                    <img src={artist.avatar} alt={artist.name} className="h-14 w-14 rounded-full object-cover" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-semibold text-slate-800">{artist.name}</p>
+                      <p className="truncate text-xs text-slate-500">{artist.specialization}</p>
+                      <p className="mt-1 text-xs text-forest">{artist.location}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
+      {/* 5. Why Shop on Articraft Section */}
       <section className="section-shell py-16">
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-[2rem] border border-stone-200 bg-white p-8 shadow-soft">
-            <Palette className="text-clay" size={28} />
-            <h3 className="mt-6 text-2xl font-semibold text-slate-800">Sell your art</h3>
-            <p className="mt-3 text-slate-600">Create a shop, highlight your process, and connect with customers who value handmade work.</p>
+        <div className="mb-10 text-center">
+          <p className="text-sm uppercase tracking-[0.25em] text-slate-500">The Articraft promise</p>
+          <h2 className="mt-2 font-display text-4xl text-forest">Why Shop on Articraft</h2>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {whyShopFeatures.map(({ icon: Icon, title, description }) => (
+            <div key={title} className="rounded-[2rem] border border-stone-200 bg-white p-7 shadow-soft">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-forest">
+                <Icon size={24} />
+              </div>
+              <h3 className="mt-5 text-xl font-semibold text-slate-800">{title}</h3>
+              <p className="mt-2.5 text-sm leading-relaxed text-slate-600">{description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 6. Customer Reviews (Rendered only when real reviews exist) */}
+      {reviews.length > 0 && (
+        <section className="bg-[#f4efe8] py-16">
+          <div className="section-shell">
+            <div className="mb-8 text-center">
+              <p className="text-sm uppercase tracking-[0.25em] text-slate-500">Collector feedback</p>
+              <h2 className="mt-2 font-display text-4xl text-forest">What Art Collectors Say</h2>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-3">
+              {reviews.map((rev) => (
+                <div key={rev._id} className="rounded-[2rem] border border-stone-200 bg-white p-6 shadow-soft">
+                  <div className="flex items-center gap-1 text-amber-600">
+                    {Array.from({ length: rev.rating || 5 }).map((_, i) => (
+                      <Star key={i} size={16} fill="currentColor" />
+                    ))}
+                  </div>
+                  <p className="mt-4 text-sm italic text-slate-700">"{rev.comment}"</p>
+                  <div className="mt-5 border-t border-stone-100 pt-3 text-xs text-slate-500">
+                    <span className="font-semibold text-slate-800">{rev.user?.name || 'Verified Customer'}</span>
+                    <span className="ml-2">Verified Purchase</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="rounded-[2rem] border border-stone-200 bg-white p-8 shadow-soft">
-            <Search className="text-clay" size={28} />
-            <h3 className="mt-6 text-2xl font-semibold text-slate-800">Discover beautiful finds</h3>
-            <p className="mt-3 text-slate-600">Browse pieces from craft communities across the globe.</p>
-          </div>
-          <div className="rounded-[2rem] border border-stone-200 bg-white p-8 shadow-soft">
-            <ShoppingCart className="text-clay" size={28} />
-            <h3 className="mt-6 text-2xl font-semibold text-slate-800">Manage your purchases</h3>
-            <p className="mt-3 text-slate-600">Track orders and review eligible purchases.</p>
+        </section>
+      )}
+
+      {/* 7. Creator Call to Action */}
+      <section className="section-shell py-16">
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-forest px-8 py-16 text-white shadow-soft lg:px-16">
+          <div className="max-w-2xl">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-medium text-amber-200 backdrop-blur">
+              <Palette size={14} /> Join Our Artisan Community
+            </span>
+            <h2 className="mt-4 font-display text-4xl leading-tight sm:text-5xl">
+              Are you an artist or artisan? Showcase your craft to art lovers.
+            </h2>
+            <p className="mt-4 text-base text-stone-200">
+              Open your shop, manage products, receive tracked orders, and connect with collectors worldwide.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Link to="/signup" className="rounded-full bg-white px-7 py-3 text-sm font-semibold text-forest transition hover:bg-stone-100">
+                Become a Seller
+              </Link>
+              <Link to="/about" className="rounded-full border border-white/40 px-7 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+                Learn More
+              </Link>
+            </div>
           </div>
         </div>
       </section>

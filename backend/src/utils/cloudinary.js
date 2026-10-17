@@ -84,18 +84,18 @@ export const deleteImage = async (publicId) => {
   await getCloudinary().uploader.destroy(publicId, { resource_type: "image" });
 };
 
-console.log({
-  cloudName: process.env.CLOUDINARY_CLOUD_NAME,
-  apiKey: process.env.CLOUDINARY_API_KEY?.slice(0, 6) + "...",
-  hasSecret: !!process.env.CLOUDINARY_API_SECRET,
-});
-
 export const testCloudinary = async () => {
   try {
+    const required = ["CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET"];
+    const missing = required.filter((key) => !process.env[key]);
+    if (missing.length) {
+      console.info(`Cloudinary is not fully configured (missing: ${missing.join(', ')}). Image upload routes will be unavailable until credentials are provided.`);
+      return;
+    }
     const result = await getCloudinary().api.ping();
-    console.log("Cloudinary ping:", result);
+    console.log("Cloudinary ping successful:", result?.status || 'ok');
   } catch (error) {
-    console.error("Cloudinary ping failed:", {
+    console.warn("Cloudinary ping advisory:", {
       message: error.message,
       http_code: error.http_code,
       name: error.name,

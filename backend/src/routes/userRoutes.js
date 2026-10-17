@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import { body } from 'express-validator';
 import Artist from '../models/Artist.js';
 import Product from '../models/Product.js';
@@ -13,10 +14,12 @@ const artistProfile = (artist) => {
   const { _id, user, followers, ...profile } = item;
   return {
     ...profile,
-    id: _id,
+    id: _id?.toString ? _id.toString() : _id,
+    userId: user?._id?.toString() || (typeof user === 'string' ? user : user?.id || ''),
     name: user?.name || '',
     avatar: user?.avatar || '',
     followerCount: followers?.length || 0,
+    followers: Array.isArray(followers) ? followers.map((f) => (f?._id ? f._id.toString() : f.toString())) : [],
   };
 };
 
@@ -69,14 +72,36 @@ router.get('/artists/me/stats', protect, authorize('ARTIST'), async (req, res, n
   }
 });
 
+router.get('/artists/me', protect, authorize('ARTIST'), async (req, res, next) => {
+  try {
+    const artist = await Artist.findOne({ user: req.user._id }).populate('user', 'name avatar');
+    if (!artist) return errorResponse(res, 'Artist profile not found', 404);
+    const productCount = await Product.countDocuments({ artist: artist._id, isActive: true });
+    return successResponse(res, { artist: { ...artistProfile(artist), productCount } });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get('/artists/:id', async (req, res, next) => {
   try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return errorResponse(res, 'Artist not found', 404);
+    }
     const artist = await Artist.findById(req.params.id).populate('user', 'name avatar');
     if (!artist) return errorResponse(res, 'Artist not found', 404);
     const products = await Product.find({ artist: artist._id, isActive: true }).populate('category', 'name slug').sort({ createdAt: -1 });
     return successResponse(res, {
       artist: { ...artistProfile(artist), productCount: products.length },
-      products: products.map((product) => ({ ...product.toObject(), id: product._id, reviews: product.reviewCount || 0, images: product.images.map((image) => image.url) })),
+      products: products.map((product) => ({
+        ...product.toObject(),
+        id: product._id,
+        artist: artist.user?.name || '',
+        artistId: artist._id,
+        category: product.category?.name || '',
+        reviews: product.reviewCount || 0,
+        images: (product.images || []).map((image) => (typeof image === 'string' ? image : image.url)),
+      })),
     });
   } catch (error) {
     next(error);
@@ -114,6 +139,9 @@ router.patch(
 
 router.post('/artists/:id/follow', protect, authorize('CUSTOMER'), async (req, res, next) => {
   try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return errorResponse(res, 'Artist not found', 404);
+    }
     const artist = await Artist.findByIdAndUpdate(req.params.id, { $addToSet: { followers: req.user._id } }, { new: true });
     if (!artist) return errorResponse(res, 'Artist not found', 404);
     return successResponse(res, { following: true, followerCount: artist.followers.length }, 'Artist followed');
@@ -124,6 +152,9 @@ router.post('/artists/:id/follow', protect, authorize('CUSTOMER'), async (req, r
 
 router.delete('/artists/:id/follow', protect, authorize('CUSTOMER'), async (req, res, next) => {
   try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return errorResponse(res, 'Artist not found', 404);
+    }
     const artist = await Artist.findByIdAndUpdate(req.params.id, { $pull: { followers: req.user._id } }, { new: true });
     if (!artist) return errorResponse(res, 'Artist not found', 404);
     return successResponse(res, { following: false, followerCount: artist.followers.length }, 'Artist unfollowed');
