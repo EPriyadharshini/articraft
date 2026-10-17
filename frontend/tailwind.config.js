@@ -18,6 +18,7 @@ export default {
         display: ['Georgia', 'serif'],
       },
     },
+    
   },
   plugins: [],
 };

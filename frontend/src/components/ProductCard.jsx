@@ -79,8 +79,8 @@ export default function ProductCard({ product }) {
           )}
         </div>
 
-        <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0 max-w-full break-words text-2xl font-bold text-forest dark:text-blue-400">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="min-w-0 flex-1 break-words text-xl font-bold text-forest sm:text-2xl dark:text-blue-400">
             {formatINR(product.price)}
           </div>
 
@@ -94,7 +94,7 @@ export default function ProductCard({ product }) {
               addToCart(product).catch(() => {});
             }}
             disabled={product.stock <= 0}
-            className="flex w-full shrink-0 items-center justify-center gap-2 rounded-full bg-forest px-4 py-2 text-sm font-medium text-white shadow-soft transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700"
+            className="flex shrink-0 items-center gap-2 rounded-full bg-forest px-3 py-2 text-sm font-medium text-white shadow-soft transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60 sm:px-4 dark:bg-blue-600 dark:hover:bg-blue-700"
           >
             <ShoppingBag size={15} />
             {product.stock <= 0 ? 'Out of stock' : 'Add to Cart'}

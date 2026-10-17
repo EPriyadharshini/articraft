@@ -22,7 +22,7 @@ html[data-theme='dark'] {
   --a-accent: #60a5fa;
   /* light blue: links/icons/labels on black */
   --a-accent-hover: #93c5fd;
-  --a-btn: #2563eb;
+  --a-btn: #093593;
   /* blue buttons (white text passes AA) */
   --a-btn-hover: #1d4ed8;
 }
@@ -150,7 +150,7 @@ html[data-theme='dark'] a:focus-visible,
 html[data-theme='dark'] input:focus-visible,
 html[data-theme='dark'] textarea:focus-visible,
 html[data-theme='dark'] select:focus-visible {
-  outline-color: var(--a-accent);
+  outline-color: #0b0b0b;
 }
 
 html {
@@ -189,8 +189,8 @@ a:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 3px solid #2563eb;
-  outline-offset: 3px;
+  outline: 2px solid #a8a29e;
+  outline-offset: 2px;
 }
 
 .skip-link {
