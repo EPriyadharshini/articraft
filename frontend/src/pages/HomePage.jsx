@@ -140,8 +140,7 @@ export default function HomePage() {
     return products.slice(0, 4);
   };
 
-  const risingArtists = featuredArtists.slice(3, 7);
-  const spotlightArtists = featuredArtists.slice(0, 3);
+  const risingArtists = featuredArtists;
   const featuredProducts = products.slice(0, 4);
 
   return (
@@ -249,14 +248,14 @@ export default function HomePage() {
       </section>
 
       {/* 2. Shop by Category Section */}
-      <section className="bg-[#f4efe8] py-16">
+      <section className="bg-[#f4efe8] py-16 dark:bg-[#0b0e18]">
         <div className="section-shell">
           <div className="mb-8 flex items-end justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.25em] text-slate-500">Browse by medium</p>
-              <h2 className="mt-2 font-display text-4xl text-forest">Shop by Category</h2>
+              <p className="text-sm uppercase tracking-[0.25em] text-slate-500 dark:text-blue-400">Browse by medium</p>
+              <h2 className="mt-2 font-display text-4xl text-forest dark:text-slate-100">Shop by Category</h2>
             </div>
-            <Link to="/explore" className="hidden items-center gap-2 text-sm font-medium text-slate-700 hover:text-forest md:flex">
+            <Link to="/explore" className="hidden items-center gap-2 text-sm font-medium text-slate-700 hover:text-forest dark:text-slate-300 dark:hover:text-blue-400 md:flex">
               All categories <ArrowUpRight size={18} />
             </Link>
           </div>
@@ -266,17 +265,17 @@ export default function HomePage() {
               <Link
                 key={name}
                 to={`/explore?category=${encodeURIComponent(name)}`}
-                className="group relative overflow-hidden rounded-[2rem] border border-stone-200 bg-white shadow-soft transition hover:-translate-y-1"
+                className="group relative overflow-hidden rounded-[2rem] border border-stone-200 bg-white shadow-soft transition hover:-translate-y-1 dark:border-stone-800 dark:bg-[#0f111a]"
               >
                 <div className="overflow-hidden">
                   <img src={image} alt={name} className="h-64 w-full object-cover transition duration-500 group-hover:scale-105" />
                 </div>
                 <div className="p-5">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-semibold text-slate-800 group-hover:text-forest">{name}</h3>
-                    <ArrowRight size={16} className="text-slate-400 transition group-hover:translate-x-1 group-hover:text-forest" />
+                    <h3 className="text-xl font-semibold text-slate-800 group-hover:text-forest dark:text-slate-100 dark:group-hover:text-blue-400">{name}</h3>
+                    <ArrowRight size={16} className="text-slate-400 transition group-hover:translate-x-1 group-hover:text-forest dark:group-hover:text-blue-400" />
                   </div>
-                  <p className="mt-1 text-xs text-slate-500">{description}</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{description}</p>
                 </div>
               </Link>
             ))}
@@ -288,16 +287,16 @@ export default function HomePage() {
       <section className="section-shell py-16">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.25em] text-slate-500">Curated for you</p>
-            <h2 className="mt-2 font-display text-4xl text-forest">Art Collections</h2>
+            <p className="text-sm uppercase tracking-[0.25em] text-slate-500 dark:text-blue-400">Curated for you</p>
+            <h2 className="mt-2 font-display text-4xl text-forest dark:text-slate-100">Art Collections</h2>
           </div>
 
           {/* Tab selector */}
-          <div className="flex flex-wrap items-center gap-2 rounded-full border border-stone-200 bg-stone-100 p-1">
+          <div className="flex flex-wrap items-center gap-2 rounded-full border border-stone-200 bg-stone-100 p-1 dark:border-stone-800 dark:bg-[#0f111a]">
             <button
               onClick={() => setCollectionTab('trending')}
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-                collectionTab === 'trending' ? 'bg-forest text-white' : 'text-slate-600 hover:text-forest'
+                collectionTab === 'trending' ? 'bg-forest text-white dark:bg-blue-600 dark:text-white' : 'text-slate-600 hover:text-forest dark:text-slate-300 dark:hover:text-blue-400'
               }`}
             >
               Trending Art
@@ -305,7 +304,7 @@ export default function HomePage() {
             <button
               onClick={() => setCollectionTab('top-rated')}
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-                collectionTab === 'top-rated' ? 'bg-forest text-white' : 'text-slate-600 hover:text-forest'
+                collectionTab === 'top-rated' ? 'bg-forest text-white dark:bg-blue-600 dark:text-white' : 'text-slate-600 hover:text-forest dark:text-slate-300 dark:hover:text-blue-400'
               }`}
             >
               Top Rated
@@ -313,7 +312,7 @@ export default function HomePage() {
             <button
               onClick={() => setCollectionTab('new')}
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-                collectionTab === 'new' ? 'bg-forest text-white' : 'text-slate-600 hover:text-forest'
+                collectionTab === 'new' ? 'bg-forest text-white dark:bg-blue-600 dark:text-white' : 'text-slate-600 hover:text-forest dark:text-slate-300 dark:hover:text-blue-400'
               }`}
             >
               New Arrivals
@@ -328,88 +327,61 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. Featured Artists Spotlight */}
-      <section className="bg-[#f5f1eb] py-16">
-        <div className="section-shell">
-          <div className="mb-8 flex items-end justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-[0.25em] text-slate-500">Master creators</p>
-              <h2 className="mt-2 font-display text-4xl text-forest">Featured Artists</h2>
+      {/* 4. Rising Artists */}
+      {risingArtists.length > 0 && (
+        <section className="bg-[#f5f1eb] py-16 dark:bg-[#080a12]">
+          <div className="section-shell">
+            <div className="mb-8 flex items-end justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-blue-400">Emerging talent</p>
+                <h2 className="mt-2 font-display text-4xl text-forest dark:text-slate-100">Rising Artists</h2>
+              </div>
+              <Link to="/artists" className="hidden items-center gap-2 text-sm font-medium text-slate-700 hover:text-forest dark:text-slate-300 dark:hover:text-blue-400 md:flex">
+                View all artists <ArrowUpRight size={18} />
+              </Link>
             </div>
-            <Link to="/artists" className="hidden items-center gap-2 text-sm font-medium text-slate-700 hover:text-forest md:flex">
-              View all artists <ArrowUpRight size={18} />
-            </Link>
-          </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            {spotlightArtists.map((artist) => (
-              <div key={artist.id || artist._id} className="group rounded-[2rem] border border-stone-200 bg-white p-6 shadow-soft transition hover:-translate-y-1 dark:border-stone-800 dark:bg-[#0f111a]">
-                <Link to={`/artist/${artist.id || artist._id}`} className="block overflow-hidden rounded-[1.5rem]">
-                  <img src={artist.avatar} alt={artist.name} className="h-56 w-full object-cover transition duration-500 group-hover:scale-105" />
-                </Link>
-                <div className="mt-5">
-                  <Link to={`/artist/${artist.id || artist._id}`} className="block">
-                    <h3 className="text-2xl font-semibold text-slate-800 transition hover:text-forest dark:text-slate-100 dark:hover:text-blue-400">{artist.name}</h3>
-                  </Link>
-                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{artist.specialization}</p>
-                  <div className="mt-4 flex items-center justify-between text-sm text-slate-600 dark:text-slate-400">
-                    <span>{artist.location}</span>
-                    <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400"><Star size={14} fill="currentColor" /> {artist.rating}</span>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {risingArtists.map((artist) => (
+                <Link
+                  key={artist.id || artist._id}
+                  to={`/artist/${artist.id || artist._id}`}
+                  className="flex items-center gap-3.5 rounded-2xl border border-stone-200 bg-white p-3.5 shadow-soft transition hover:border-forest dark:border-stone-800 dark:bg-[#0f111a] dark:hover:border-blue-500"
+                >
+                  {artist.avatar ? (
+                    <img src={artist.avatar} alt={artist.name} className="h-14 w-14 shrink-0 rounded-full object-cover" />
+                  ) : (
+                    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-forest text-lg font-semibold text-white">
+                      {(artist.name || '?').charAt(0).toUpperCase()}
+                    </span>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-semibold text-slate-800 dark:text-slate-100">{artist.name}</p>
+                    <p className="truncate text-xs text-slate-500 dark:text-slate-400">{artist.specialization}</p>
+                    <p className="mt-1 truncate text-xs text-forest dark:text-blue-400">{artist.location}</p>
                   </div>
-                  <Link to={`/artist/${artist.id || artist._id}`} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-forest px-4 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-900 dark:bg-blue-600 dark:hover:bg-blue-700">
-                    View Portfolio <ArrowRight size={15} />
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* 4b. Rising Artists Sub-section */}
-          {risingArtists.length > 0 && (
-            <div className="mt-14 border-t border-stone-200 pt-10">
-              <div className="mb-6 flex items-center justify-between">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Emerging talent</p>
-                  <h3 className="text-2xl font-semibold text-slate-800">Rising Artists</h3>
-                </div>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {risingArtists.map((artist) => (
-                  <Link
-                    key={artist.id || artist._id}
-                    to={`/artist/${artist.id || artist._id}`}
-                    className="flex items-center gap-3.5 rounded-2xl border border-stone-200 bg-white p-3.5 shadow-soft transition hover:border-forest"
-                  >
-                    <img src={artist.avatar} alt={artist.name} className="h-14 w-14 rounded-full object-cover" />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-semibold text-slate-800">{artist.name}</p>
-                      <p className="truncate text-xs text-slate-500">{artist.specialization}</p>
-                      <p className="mt-1 text-xs text-forest">{artist.location}</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+                </Link>
+              ))}
             </div>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* 5. Why Shop on Articraft Section */}
       <section className="section-shell py-16">
         <div className="mb-10 text-center">
-          <p className="text-sm uppercase tracking-[0.25em] text-slate-500">The Articraft promise</p>
-          <h2 className="mt-2 font-display text-4xl text-forest">Why Shop on Articraft</h2>
+          <p className="text-sm uppercase tracking-[0.25em] text-slate-500 dark:text-blue-400">The Articraft promise</p>
+          <h2 className="mt-2 font-display text-4xl text-forest dark:text-slate-100">Why Shop on Articraft</h2>
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {whyShopFeatures.map(({ icon: Icon, title, description }) => (
-            <div key={title} className="rounded-[2rem] border border-stone-200 bg-white p-7 shadow-soft">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-forest">
+            <div key={title} className="rounded-[2rem] border border-stone-200 bg-white p-7 shadow-soft dark:border-stone-800 dark:bg-[#0f111a]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-forest dark:bg-blue-900/40 dark:text-blue-300">
                 <Icon size={24} />
               </div>
-              <h3 className="mt-5 text-xl font-semibold text-slate-800">{title}</h3>
-              <p className="mt-2.5 text-sm leading-relaxed text-slate-600">{description}</p>
+              <h3 className="mt-5 text-xl font-semibold text-slate-800 dark:text-slate-100">{title}</h3>
+              <p className="mt-2.5 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{description}</p>
             </div>
           ))}
         </div>
@@ -417,24 +389,24 @@ export default function HomePage() {
 
       {/* 6. Customer Reviews (Rendered only when real reviews exist) */}
       {reviews.length > 0 && (
-        <section className="bg-[#f4efe8] py-16">
+        <section className="bg-[#f4efe8] py-16 dark:bg-[#0b0e18]">
           <div className="section-shell">
             <div className="mb-8 text-center">
-              <p className="text-sm uppercase tracking-[0.25em] text-slate-500">Collector feedback</p>
-              <h2 className="mt-2 font-display text-4xl text-forest">What Art Collectors Say</h2>
+              <p className="text-sm uppercase tracking-[0.25em] text-slate-500 dark:text-blue-400">Collector feedback</p>
+              <h2 className="mt-2 font-display text-4xl text-forest dark:text-slate-100">What Art Collectors Say</h2>
             </div>
 
             <div className="grid gap-6 md:grid-cols-3">
               {reviews.map((rev) => (
-                <div key={rev._id} className="rounded-[2rem] border border-stone-200 bg-white p-6 shadow-soft">
-                  <div className="flex items-center gap-1 text-amber-600">
+                <div key={rev._id} className="rounded-[2rem] border border-stone-200 bg-white p-6 shadow-soft dark:border-stone-800 dark:bg-[#0f111a]">
+                  <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
                     {Array.from({ length: rev.rating || 5 }).map((_, i) => (
                       <Star key={i} size={16} fill="currentColor" />
                     ))}
                   </div>
-                  <p className="mt-4 text-sm italic text-slate-700">"{rev.comment}"</p>
-                  <div className="mt-5 border-t border-stone-100 pt-3 text-xs text-slate-500">
-                    <span className="font-semibold text-slate-800">{rev.user?.name || 'Verified Customer'}</span>
+                  <p className="mt-4 text-sm italic text-slate-700 dark:text-slate-200">"{rev.comment}"</p>
+                  <div className="mt-5 border-t border-stone-100 pt-3 text-xs text-slate-500 dark:border-stone-800 dark:text-slate-400">
+                    <span className="font-semibold text-slate-800 dark:text-slate-100">{rev.user?.name || 'Verified Customer'}</span>
                     <span className="ml-2">Verified Purchase</span>
                   </div>
                 </div>
@@ -446,22 +418,22 @@ export default function HomePage() {
 
       {/* 7. Creator Call to Action */}
       <section className="section-shell py-16">
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-forest px-8 py-16 text-white shadow-soft lg:px-16">
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-forest px-8 py-16 text-white shadow-soft lg:px-16 dark:border dark:border-stone-800 dark:bg-[#0d1326]">
           <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-medium text-amber-200 backdrop-blur">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-medium text-amber-200 backdrop-blur dark:bg-blue-500/10 dark:text-blue-300">
               <Palette size={14} /> Join Our Artisan Community
             </span>
-            <h2 className="mt-4 font-display text-4xl leading-tight sm:text-5xl">
+            <h2 className="mt-4 font-display text-4xl leading-tight sm:text-5xl text-white">
               Are you an artist or artisan? Showcase your craft to art lovers.
             </h2>
-            <p className="mt-4 text-base text-stone-200">
+            <p className="mt-4 text-base text-stone-200 dark:text-slate-300">
               Open your shop, manage products, receive tracked orders, and connect with collectors worldwide.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link to="/signup" className="rounded-full bg-white px-7 py-3 text-sm font-semibold text-forest transition hover:bg-stone-100">
+              <Link to="/signup" className="rounded-full bg-white px-7 py-3 text-sm font-semibold text-forest transition hover:bg-stone-100 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700">
                 Become a Seller
               </Link>
-              <Link to="/about" className="rounded-full border border-white/40 px-7 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+              <Link to="/about" className="rounded-full border border-white/40 px-7 py-3 text-sm font-semibold text-white transition hover:bg-white/10 dark:border-stone-700 dark:hover:bg-stone-800">
                 Learn More
               </Link>
             </div>

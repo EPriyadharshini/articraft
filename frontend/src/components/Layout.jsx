@@ -43,22 +43,22 @@ export default function Layout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#fffaf5] text-slate-900">
-      <a href="#main-content" className="skip-link rounded-full bg-forest px-4 py-2 text-sm font-medium text-white">Skip to main content</a>
-      <header className="sticky top-0 z-40 border-b border-stone-200 bg-[#fffaf5]/90 backdrop-blur-xl">
+    <div className="min-h-screen bg-[#fffaf5] text-slate-900 dark:bg-[#05060f] dark:text-slate-100">
+      <a href="#main-content" className="skip-link rounded-full bg-forest px-4 py-2 text-sm font-medium text-white dark:bg-blue-600">Skip to main content</a>
+      <header className="sticky top-0 z-40 border-b border-stone-200 bg-[#fffaf5]/90 backdrop-blur-xl dark:border-stone-800 dark:bg-[#05060f]/90">
         {/* Primary Header Row: Brand, Amazon-style Search, Actions */}
         <div className="section-shell flex items-center justify-between gap-4 py-3.5">
           <Link to="/" className="flex items-center gap-2.5 shrink-0">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-forest text-white shadow-soft">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-forest text-white shadow-soft dark:bg-blue-600">
               <Sparkles size={18} />
             </div>
             <div>
-              <div className="font-display text-2xl font-bold tracking-tight text-forest">Articraft</div>
+              <div className="font-display text-2xl font-bold tracking-tight text-forest dark:text-slate-100">Articraft</div>
             </div>
           </Link>
 
           {/* Amazon-style search bar on desktop */}
-          <form onSubmit={handleHeaderSearch} className="hidden flex-1 max-w-2xl lg:flex items-center rounded-full border border-stone-300 bg-white shadow-sm transition-all focus-within:border-forest focus-within:ring-2 focus-within:ring-forest/20 dark:border-stone-700 dark:bg-[#0b0d16]">
+          <form onSubmit={handleHeaderSearch} className="hidden flex-1 max-w-2xl lg:flex items-center rounded-full border border-stone-300 bg-white shadow-sm transition-all focus-within:border-forest focus-within:ring-2 focus-within:ring-forest/20 dark:border-stone-700 dark:bg-[#0b0d16] dark:focus-within:border-blue-500">
             <select
               aria-label="Search category"
               value={headerCategory}
@@ -76,13 +76,13 @@ export default function Layout({ children }) {
               placeholder="Search original art, artisan pottery, textiles, jewelry..."
               value={headerSearch}
               onChange={(e) => setHeaderSearch(e.target.value)}
-              className="h-10 flex-1 bg-transparent px-4 text-sm text-slate-800 placeholder-slate-400 outline-none"
+              className="h-10 flex-1 bg-transparent px-4 text-sm text-slate-800 placeholder-slate-400 outline-none dark:text-slate-100 dark:placeholder-slate-500"
             />
 
             <button
               type="submit"
               aria-label="Search"
-              className="flex h-10 items-center justify-center rounded-r-full bg-forest px-5 text-white transition hover:bg-emerald-900"
+              className="flex h-10 items-center justify-center rounded-r-full bg-forest px-5 text-white transition hover:bg-emerald-900 dark:bg-blue-600 dark:hover:bg-blue-700"
             >
               <Search size={16} />
             </button>
@@ -90,9 +90,17 @@ export default function Layout({ children }) {
 
           {/* Navigation links & User actions */}
           <div className="hidden items-center gap-4 lg:flex">
-            <nav className="flex items-center gap-5 text-sm font-medium text-slate-700">
+            <nav className="flex items-center gap-5 text-sm font-medium text-slate-700 dark:text-slate-300">
               {visibleNavItems.map(({ label, to }) => (
-                <NavLink key={to} to={to} className={({ isActive }) => (isActive ? 'text-forest font-semibold' : 'hover:text-forest')}>
+                <NavLink
+                  key={to}
+                  to={to}
+                  className={({ isActive }) =>
+                    isActive
+                      ? 'text-forest font-semibold dark:text-blue-400'
+                      : 'hover:text-forest transition dark:hover:text-blue-400'
+                  }
+                >
                   {label}
                 </NavLink>
               ))}
@@ -102,7 +110,7 @@ export default function Layout({ children }) {
 
             <div className="flex items-center gap-2.5">
               <ThemeToggle />
-              <Link to="/wishlist" className="relative rounded-full border border-stone-300 p-2 transition hover:border-forest hover:text-forest dark:border-stone-700" aria-label="Wishlist">
+              <Link to="/wishlist" className="relative rounded-full border border-stone-300 p-2 text-slate-700 transition hover:border-forest hover:text-forest dark:border-stone-700 dark:text-slate-300 dark:hover:border-blue-400 dark:hover:text-blue-400" aria-label="Wishlist">
                 <Heart size={16} />
                 {wishlist.length > 0 && (
                   <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-clay px-1 text-[9px] font-bold text-white">
@@ -110,7 +118,7 @@ export default function Layout({ children }) {
                   </span>
                 )}
               </Link>
-              <Link to="/cart" className="relative rounded-full border border-stone-300 p-2 transition hover:border-forest hover:text-forest dark:border-stone-700" aria-label="Cart">
+              <Link to="/cart" className="relative rounded-full border border-stone-300 p-2 text-slate-700 transition hover:border-forest hover:text-forest dark:border-stone-700 dark:text-slate-300 dark:hover:border-blue-400 dark:hover:text-blue-400" aria-label="Cart">
                 <ShoppingBag size={16} />
                 {cart.length > 0 && (
                   <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-clay px-1 text-[9px] font-bold text-white">
@@ -120,16 +128,16 @@ export default function Layout({ children }) {
               </Link>
               {user ? (
                 <div className="flex items-center gap-2 ml-1">
-                  <Link to="/account" className="flex items-center gap-1.5 rounded-full bg-forest px-3.5 py-1.5 text-xs font-semibold text-white">
+                  <Link to="/account" className="flex items-center gap-1.5 rounded-full bg-forest px-3.5 py-1.5 text-xs font-semibold text-white dark:bg-blue-600">
                     <UserRound size={13} />
                     {user.name.split(' ')[0]}
                   </Link>
-                  <button onClick={logout} className="text-xs text-slate-500 hover:text-forest">Log Out</button>
+                  <button onClick={logout} className="text-xs text-slate-500 hover:text-forest dark:text-slate-400 dark:hover:text-blue-400">Log Out</button>
                 </div>
               ) : (
                 <div className="flex items-center gap-2 ml-1">
-                  <Link to="/login" className="rounded-full border border-stone-300 px-3.5 py-1.5 text-xs font-medium hover:border-forest hover:text-forest dark:border-stone-700">Login</Link>
-                  <Link to="/signup" className="rounded-full bg-forest px-3.5 py-1.5 text-xs font-semibold text-white shadow-soft hover:bg-emerald-900">Sign up</Link>
+                  <Link to="/login" className="rounded-full border border-stone-300 px-3.5 py-1.5 text-xs font-medium text-slate-700 hover:border-forest hover:text-forest dark:border-stone-700 dark:text-slate-200 dark:hover:border-blue-400 dark:hover:text-blue-400">Login</Link>
+                  <Link to="/signup" className="rounded-full bg-forest px-3.5 py-1.5 text-xs font-semibold text-white shadow-soft hover:bg-emerald-900 dark:bg-blue-600 dark:hover:bg-blue-700">Sign up</Link>
                 </div>
               )}
             </div>
@@ -138,7 +146,7 @@ export default function Layout({ children }) {
           {/* Mobile controls */}
           <div className="flex items-center gap-2 lg:hidden">
             <ThemeToggle />
-            <Link to="/cart" className="relative rounded-full border border-stone-300 p-2 dark:border-stone-700" aria-label="Cart">
+            <Link to="/cart" className="relative rounded-full border border-stone-300 p-2 text-slate-700 dark:border-stone-700 dark:text-slate-300" aria-label="Cart">
               <ShoppingBag size={16} />
               {cart.length > 0 && (
                 <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-clay px-1 text-[9px] font-bold text-white">
@@ -146,27 +154,27 @@ export default function Layout({ children }) {
                 </span>
               )}
             </Link>
-            <button className="rounded-full border border-stone-300 p-2 dark:border-stone-700" onClick={() => setMenuOpen((prev) => !prev)} aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={menuOpen} aria-controls="mobile-navigation">
+            <button className="rounded-full border border-stone-300 p-2 text-slate-700 dark:border-stone-700 dark:text-slate-300" onClick={() => setMenuOpen((prev) => !prev)} aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={menuOpen} aria-controls="mobile-navigation">
               <Menu size={18} />
             </button>
           </div>
         </div>
 
         {/* Secondary Category Navigation Bar — Saatchi Art inspired */}
-        {/* <div className="hidden border-t border-stone-200/80 bg-white/50 py-2 dark:border-stone-800/80 dark:bg-[#0b0d16]/50 lg:block">
+        <div className="hidden border-t border-stone-200/80 bg-white/50 py-2 dark:border-stone-800/80 dark:bg-[#0b0d16]/50 lg:block">
           <div className="section-shell flex items-center justify-between text-xs font-medium text-slate-600">
             <div className="flex items-center gap-6">
-              <Link to="/explore" className="font-semibold text-forest hover:underline">Explore All Marketplace</Link>
+              <Link to="/explore" className="font-semibold text-forest hover:underline dark:text-blue-400">Explore All Marketplace</Link>
               {headerCategories.map((cat) => (
-                <Link key={cat} to={`/explore?category=${encodeURIComponent(cat)}`} className="hover:text-forest transition">
+                <Link key={cat} to={`/explore?category=${encodeURIComponent(cat)}`} className="text-slate-700 hover:text-forest transition dark:text-slate-300 dark:hover:text-blue-400">
                   {cat}
                 </Link>
               ))}
             </div>
-            <div className="flex items-center gap-4 text-[11px] text-slate-500">
+            <div className="flex items-center gap-4 text-[11px] text-slate-600 dark:text-slate-400">
               <span>Free shipping over ₹120</span>
               <span className="text-stone-300 dark:text-stone-700">•</span>
-              <Link to="/artists" className="hover:text-forest">Discover 50+ Makers</Link>
+              <Link to="/artists" className="hover:text-forest dark:hover:text-blue-400">Discover 50+ Makers</Link>
             </div>
           </div>
         </div> */}
@@ -221,49 +229,49 @@ export default function Layout({ children }) {
         {children}
       </main>
 
-      <footer className="border-t border-stone-200 bg-[#f2ebe4]">
+      <footer className="border-t border-stone-200 bg-[#f2ebe4] text-slate-800 dark:border-stone-800 dark:bg-[#05060f] dark:text-slate-200">
         <div className="section-shell py-12">
           <div className="mb-10 max-w-md">
-            <div className="font-display text-3xl text-forest">Articraft</div>
-            <p className="mt-3 text-sm text-slate-600">Discover art. Support artists. Own something handmade.</p>
+            <div className="font-display text-3xl text-forest dark:text-slate-100">Articraft</div>
+            <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">Discover art. Support artists. Own something handmade.</p>
           </div>
 
           <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
             <div>
-              <h3 className="font-semibold text-slate-800">Explore</h3>
-              <ul className="mt-4 space-y-2.5 text-sm text-slate-600">
-                <li><Link to="/" className="hover:text-forest">Home</Link></li>
-                <li><Link to="/explore" className="hover:text-forest">Marketplace</Link></li>
-                <li><Link to="/artists" className="hover:text-forest">Artists</Link></li>
-                <li><Link to="/journal" className="hover:text-forest">Journal</Link></li>
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100">Explore</h3>
+              <ul className="mt-4 space-y-2.5 text-sm text-slate-600 dark:text-slate-400">
+                <li><Link to="/" className="hover:text-forest dark:hover:text-blue-400">Home</Link></li>
+                <li><Link to="/explore" className="hover:text-forest dark:hover:text-blue-400">Marketplace</Link></li>
+                <li><Link to="/artists" className="hover:text-forest dark:hover:text-blue-400">Artists</Link></li>
+                <li><Link to="/journal" className="hover:text-forest dark:hover:text-blue-400">Journal</Link></li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold text-slate-800">For Artists</h3>
-              <ul className="mt-4 space-y-2.5 text-sm text-slate-600">
-                <li><Link to="/signup" className="hover:text-forest">Become an Artist</Link></li>
-                <li><Link to={user?.role === 'ARTIST' ? '/sell/products' : '/login'} className="hover:text-forest">Sell Products</Link></li>
-                <li><Link to={user?.role === 'ARTIST' ? '/sell' : '/login'} className="hover:text-forest">Artist Dashboard</Link></li>
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100">For Artists</h3>
+              <ul className="mt-4 space-y-2.5 text-sm text-slate-600 dark:text-slate-400">
+                <li><Link to="/signup" className="hover:text-forest dark:hover:text-blue-400">Become an Artist</Link></li>
+                <li><Link to={user?.role === 'ARTIST' ? '/sell/products' : '/login'} className="hover:text-forest dark:hover:text-blue-400">Sell Products</Link></li>
+                <li><Link to={user?.role === 'ARTIST' ? '/sell' : '/login'} className="hover:text-forest dark:hover:text-blue-400">Artist Dashboard</Link></li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold text-slate-800">Customer Support</h3>
-              <ul className="mt-4 space-y-2.5 text-sm text-slate-600">
-                <li><Link to="/contact" className="hover:text-forest">Contact Us</Link></li>
-                <li><Link to="/contact" className="hover:text-forest">FAQs</Link></li>
-                <li><Link to="/shipping" className="hover:text-forest">Shipping &amp; Delivery</Link></li>
-                <li><Link to="/refunds" className="hover:text-forest">Returns &amp; Refunds</Link></li>
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100">Customer Support</h3>
+              <ul className="mt-4 space-y-2.5 text-sm text-slate-600 dark:text-slate-400">
+                <li><Link to="/contact" className="hover:text-forest dark:hover:text-blue-400">Contact Us</Link></li>
+                <li><Link to="/contact" className="hover:text-forest dark:hover:text-blue-400">FAQs</Link></li>
+                <li><Link to="/shipping" className="hover:text-forest dark:hover:text-blue-400">Shipping &amp; Delivery</Link></li>
+                <li><Link to="/refunds" className="hover:text-forest dark:hover:text-blue-400">Returns &amp; Refunds</Link></li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold text-slate-800">About Articraft</h3>
-              <ul className="mt-4 space-y-2.5 text-sm text-slate-600">
-                <li><Link to="/about" className="hover:text-forest">About Us</Link></li>
-                <li><Link to="/privacy" className="hover:text-forest">Privacy Policy</Link></li>
-                <li><Link to="/terms" className="hover:text-forest">Terms &amp; Conditions</Link></li>
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100">About Articraft</h3>
+              <ul className="mt-4 space-y-2.5 text-sm text-slate-600 dark:text-slate-400">
+                <li><Link to="/about" className="hover:text-forest dark:hover:text-blue-400">About Us</Link></li>
+                <li><Link to="/privacy" className="hover:text-forest dark:hover:text-blue-400">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="hover:text-forest dark:hover:text-blue-400">Terms &amp; Conditions</Link></li>
               </ul>
             </div>
           </div>
