@@ -19,7 +19,6 @@ html[data-theme='dark'] {
   --a-border: #262626;
   --a-text: #f5f5f5;
   --a-text-2: #b8b8b8;
-<<<<<<< HEAD
   --a-accent: #60a5fa;
   /* light blue: links/icons/labels on black */
   --a-accent-hover: #93c5fd;
@@ -36,15 +35,6 @@ html[data-theme='dark'] body {
 html[data-theme='dark'] .min-h-screen {
   background-color: var(--a-bg);
 }
-=======
-  --a-accent: #60a5fa;        /* light blue: links/icons/labels on black */
-  --a-accent-hover: #93c5fd;
-  --a-btn: #2563eb;           /* blue buttons (white text passes AA) */
-  --a-btn-hover: #1d4ed8;
-}
-html[data-theme='dark'] body { background: var(--a-bg); color: var(--a-text); }
-html[data-theme='dark'] .min-h-screen { background-color: var(--a-bg); }
->>>>>>> d4fb29c (theme changed)
 
 /* Surfaces */
 html[data-theme='dark'] .bg-white,
@@ -55,7 +45,6 @@ html[data-theme='dark'] .bg-\[\#fffaf5\],
 html[data-theme='dark'] .bg-\[\#f2ebe4\],
 html[data-theme='dark'] .bg-\[\#f2ece4\],
 html[data-theme='dark'] .bg-\[\#f4efe8\],
-<<<<<<< HEAD
 html[data-theme='dark'] .bg-\[\#f5f1eb\] {
   background-color: var(--a-surface);
 }
@@ -156,57 +145,13 @@ html[data-theme='dark'] .bg-amber-100 {
   color: var(--a-accent);
 }
 
-=======
-html[data-theme='dark'] .bg-\[\#f5f1eb\] { background-color: var(--a-surface); }
-html[data-theme='dark'] .bg-white\/90,
-html[data-theme='dark'] .bg-white\/80,
-html[data-theme='dark'] .bg-\[\#fffaf5\]\/80 { background-color: rgba(12, 12, 12, 0.92); border-color: var(--a-border); }
-html[data-theme='dark'] .hover\:bg-\[\#e9e0d7\]:hover { background-color: var(--a-surface-2); }
-html[data-theme='dark'] header.sticky { background-color: rgba(0, 0, 0, 0.88); border-color: var(--a-border); }
-html[data-theme='dark'] footer { background-color: var(--a-bg); border-color: var(--a-border); }
-
-/* Text */
-html[data-theme='dark'] .text-slate-900,
-html[data-theme='dark'] .text-slate-800 { color: var(--a-text); }
-html[data-theme='dark'] .text-slate-700,
-html[data-theme='dark'] .text-slate-600,
-html[data-theme='dark'] .text-slate-500 { color: var(--a-text-2); }
-html[data-theme='dark'] .text-\[\#9da7ba\] { color: var(--a-text-2); }
-html[data-theme='dark'] ::placeholder { color: #8a8a8a; opacity: 1; }
-
-/* Borders */
-html[data-theme='dark'] .border-stone-200,
-html[data-theme='dark'] .border-stone-300 { border-color: var(--a-border); }
-html[data-theme='dark'] .ring-stone-200 { --tw-ring-color: var(--a-border); }
-
-/* Form controls */
-html[data-theme='dark'] input,
-html[data-theme='dark'] textarea,
-html[data-theme='dark'] select { background-color: var(--a-surface-2); color: var(--a-text); }
-
-/* Blue accents (forest green is too dark on black) */
-html[data-theme='dark'] .text-forest { color: var(--a-accent); }
-html[data-theme='dark'] .border-forest { border-color: var(--a-accent); }
-html[data-theme='dark'] .hover\:text-forest:hover { color: var(--a-accent-hover); }
-html[data-theme='dark'] .hover\:border-forest:hover,
-html[data-theme='dark'] .focus\:border-forest:focus { border-color: var(--a-accent); }
-html[data-theme='dark'] .bg-forest { background-color: var(--a-btn); }
-html[data-theme='dark'] .hover\:bg-emerald-900:hover { background-color: var(--a-btn-hover); }
-html[data-theme='dark'] button.bg-forest,
-html[data-theme='dark'] a.bg-forest { color: #ffffff; }
-html[data-theme='dark'] .bg-amber-100 { background-color: rgba(96, 165, 250, 0.16); color: var(--a-accent); }
->>>>>>> d4fb29c (theme changed)
 html[data-theme='dark'] button:focus-visible,
 html[data-theme='dark'] a:focus-visible,
 html[data-theme='dark'] input:focus-visible,
 html[data-theme='dark'] textarea:focus-visible,
-<<<<<<< HEAD
 html[data-theme='dark'] select:focus-visible {
   outline-color: var(--a-accent);
 }
-=======
-html[data-theme='dark'] select:focus-visible { outline-color: var(--a-accent); }
->>>>>>> d4fb29c (theme changed)
 
 html {
   scroll-behavior: smooth;
@@ -256,7 +201,6 @@ select:focus-visible {
   transform: translateY(-200%);
 }
 
-<<<<<<< HEAD
 .skip-link:focus {
   transform: translateY(0);
 }
@@ -265,14 +209,6 @@ select:focus-visible {
   @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
 }
 
-=======
-.skip-link:focus { transform: translateY(0); }
-
-.section-shell {
-  @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
-}
-
->>>>>>> d4fb29c (theme changed)
 /* Dark-mode UI kit (black + blue accents) */
 
 html[data-theme='dark'] .glow-btn {
@@ -462,10 +398,7 @@ html[data-theme='dark'] .share-btn {
   position: relative;
   overflow: hidden;
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> d4fb29c (theme changed)
 html[data-theme='dark'] .share-btn .share-label {
   z-index: 1;
   display: inline-block;
@@ -480,10 +413,7 @@ html[data-theme='dark'] .share-btn .share-label {
   letter-spacing: 1px;
   transition: all 0.5s;
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> d4fb29c (theme changed)
 html[data-theme='dark'] .share-btn .share-container {
   z-index: 0;
   width: 0;
@@ -494,7 +424,6 @@ html[data-theme='dark'] .share-btn .share-container {
   transition: all 0.4s;
   color: #93c5fd;
 }
-<<<<<<< HEAD
 
 html[data-theme='dark'] .share-btn .share-container svg {
   padding: 0 6px;
@@ -508,11 +437,6 @@ html[data-theme='dark'] .share-btn:hover .share-container {
   z-index: 2;
   width: 100%;
 }
-=======
-html[data-theme='dark'] .share-btn .share-container svg { padding: 0 6px; }
-html[data-theme='dark'] .share-btn:hover .share-label { width: 0; }
-html[data-theme='dark'] .share-btn:hover .share-container { z-index: 2; width: 100%; }
->>>>>>> d4fb29c (theme changed)
 
 html[data-theme='dark'] .hero-heading {
   color: transparent;

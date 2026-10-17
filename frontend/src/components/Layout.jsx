@@ -160,24 +160,6 @@ export default function Layout({ children }) {
           </div>
         </div>
 
-        {/* Secondary Category Navigation Bar — Saatchi Art inspired */}
-        <div className="hidden border-t border-stone-200/80 bg-white/50 py-2 dark:border-stone-800/80 dark:bg-[#0b0d16]/50 lg:block">
-          <div className="section-shell flex items-center justify-between text-xs font-medium text-slate-600">
-            <div className="flex items-center gap-6">
-              <Link to="/explore" className="font-semibold text-forest hover:underline dark:text-blue-400">Explore All Marketplace</Link>
-              {headerCategories.map((cat) => (
-                <Link key={cat} to={`/explore?category=${encodeURIComponent(cat)}`} className="text-slate-700 hover:text-forest transition dark:text-slate-300 dark:hover:text-blue-400">
-                  {cat}
-                </Link>
-              ))}
-            </div>
-            <div className="flex items-center gap-4 text-[11px] text-slate-600 dark:text-slate-400">
-              <span>Free shipping over ₹120</span>
-              <span className="text-stone-300 dark:text-stone-700">•</span>
-              <Link to="/artists" className="hover:text-forest dark:hover:text-blue-400">Discover 50+ Makers</Link>
-            </div>
-          </div>
-        </div>
 
         {/* Mobile menu dropdown */}
         {menuOpen && (
