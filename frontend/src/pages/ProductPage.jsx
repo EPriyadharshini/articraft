@@ -105,7 +105,7 @@ export default function ProductPage() {
             <button
               disabled={product.stock <= 0}
               onClick={() => addToCart(product).catch(() => {})}
-              className="glow-btn flex items-center gap-2 rounded-full bg-forest px-6 py-3 font-medium text-white hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
+              className="glow-btn flex shrink-0 items-center gap-2 rounded-full bg-forest px-6 py-3 font-medium text-white hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <span className="glow-blob" />
               <span className="glow-inner flex items-center gap-2">

@@ -26,7 +26,7 @@ export default function CheckoutPage() {
   }
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shipping = subtotal > 120 ? 0 : 12;
+  const shipping = subtotal >= 120 ? 0 : 12;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
 

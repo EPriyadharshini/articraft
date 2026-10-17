@@ -445,3 +445,29 @@ html[data-theme='dark'] .hero-heading {
   -webkit-background-clip: text;
   text-shadow: none;
 }
+
+
+/* Fix product card price and Add to Cart overlap */
+.product-card-footer,
+.price-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.product-card-footer .price,
+.price-row .price {
+  flex: 1 1 100%;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.product-card-footer .add-to-cart-btn,
+.price-row .add-to-cart-btn {
+  flex: 0 0 100%;
+  width: 100%;
+  max-width: 100%;
+}

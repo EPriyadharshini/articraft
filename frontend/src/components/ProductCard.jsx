@@ -1,10 +1,13 @@
+
 import { Heart, ShoppingBag, Star } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { formatINR } from '../utils/currency';
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from 'react-router-dom';
+
 export default function ProductCard({ product }) {
-  const { addToCart, toggleWishlist, wishlist,user } = useAppContext();
+  const { addToCart, toggleWishlist, wishlist, user } = useAppContext();
   const navigate = useNavigate();
+
   return (
     <div className="group overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-soft transition hover:-translate-y-1 dark:border-stone-800 dark:bg-[#0f111a]">
       <div className="relative">
@@ -15,25 +18,26 @@ export default function ProductCard({ product }) {
             className="h-72 w-full object-cover transition duration-500 group-hover:scale-105"
           />
         </Link>
+
         <button
           onClick={() => {
             if (!user) {
-              navigate("/login");
+              navigate('/login');
               return;
             }
 
             toggleWishlist(product.id);
           }}
-          aria-label={`${wishlist.includes(product.id) ? "Remove" : "Add"} ${product.name} ${wishlist.includes(product.id) ? "from" : "to"} wishlist`}
+          aria-label={`${wishlist.includes(product.id) ? 'Remove' : 'Add'} ${product.name} ${wishlist.includes(product.id) ? 'from' : 'to'} wishlist`}
           className={`absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border ${
             wishlist.includes(product.id)
-              ? "bg-clay text-white border-clay"
-              : "bg-white/80 border-white/60 text-slate-700 dark:bg-stone-900/80 dark:border-stone-700 dark:text-slate-200"
+              ? 'bg-clay text-white border-clay'
+              : 'bg-white/80 border-white/60 text-slate-700 dark:bg-stone-900/80 dark:border-stone-700 dark:text-slate-200'
           }`}
         >
           <Heart
             size={16}
-            fill={wishlist.includes(product.id) ? "currentColor" : "none"}
+            fill={wishlist.includes(product.id) ? 'currentColor' : 'none'}
           />
         </button>
       </div>
@@ -43,6 +47,7 @@ export default function ProductCard({ product }) {
           <div className="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
             {product.category}
           </div>
+
           <div className="flex items-center gap-1 text-sm text-amber-600 dark:text-amber-400">
             <Star size={14} fill="currentColor" />
             {product.rating}
@@ -56,9 +61,10 @@ export default function ProductCard({ product }) {
           >
             {product.name}
           </Link>
+
           {product.artist && (
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-              By{" "}
+              By{' '}
               {product.artistId ? (
                 <Link
                   to={`/artist/${product.artistId}`}
@@ -73,24 +79,25 @@ export default function ProductCard({ product }) {
           )}
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="text-2xl font-bold text-forest dark:text-blue-400">
+        <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0 max-w-full break-words text-2xl font-bold text-forest dark:text-blue-400">
             {formatINR(product.price)}
           </div>
+
           <button
             onClick={() => {
               if (!user) {
-                navigate("/login");
+                navigate('/login');
                 return;
               }
 
               addToCart(product).catch(() => {});
             }}
             disabled={product.stock <= 0}
-            className="flex items-center gap-2 rounded-full bg-forest px-4 py-2 text-sm font-medium text-white shadow-soft transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-blue-600 dark:hover:bg-blue-700"
+            className="flex w-full shrink-0 items-center justify-center gap-2 rounded-full bg-forest px-4 py-2 text-sm font-medium text-white shadow-soft transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700"
           >
             <ShoppingBag size={15} />
-            {product.stock <= 0 ? "Out of stock" : "Add to Cart"}
+            {product.stock <= 0 ? 'Out of stock' : 'Add to Cart'}
           </button>
         </div>
       </div>

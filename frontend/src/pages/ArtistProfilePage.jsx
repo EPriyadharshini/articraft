@@ -317,7 +317,7 @@ export default function ArtistProfilePage() {
           {/* Artist Bio & Details */}
           <div className="flex flex-col justify-between">
             <div>
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3 min-w-0">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-forest/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-forest dark:bg-blue-900/40 dark:text-blue-300">
                   <Palette size={13} /> Verified Artist
                 </span>

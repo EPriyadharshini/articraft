@@ -8,6 +8,7 @@ import { config } from '../config/env.js';
 import { protect } from '../middleware/auth.js';
 import { handleValidationErrors } from '../middleware/validate.js';
 import { errorResponse, successResponse } from '../utils/apiResponse.js';
+import { sendEmail } from '../utils/sendemail.js';
 
 const router = express.Router();
 
@@ -70,6 +71,7 @@ router.post(
       const message = 'If an account exists for that email, a reset link has been generated.';
 
       if (!user) {
+        console.log('Forgot-password: no user found for', req.body.email);
         return successResponse(res, null, message);
       }
 
@@ -78,7 +80,29 @@ router.post(
       user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
       await user.save({ validateBeforeSave: false });
 
-      return successResponse(res, process.env.NODE_ENV === 'production' ? null : { resetToken: rawToken }, message);
+      const clientUrl = config.clientUrl || process.env.CLIENT_URL;
+      const resetUrl = `${clientUrl}/reset-password/${rawToken}`;
+
+      try {
+        await sendEmail({
+          to: user.email,
+          subject: 'Reset your Articraft password',
+          html: `
+            <p>Hi ${user.name},</p>
+            <p>Click the link below to reset your password. It expires in 15 minutes.</p>
+            <p><a href="${resetUrl}">${resetUrl}</a></p>
+            <p>If you didn't request this, ignore this email.</p>
+          `,
+        });
+        console.log('Reset email sent to', user.email);
+      } catch (err) {
+        console.error('Reset email failed:', err.message);
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save({ validateBeforeSave: false });
+      }
+
+      return successResponse(res, null, message);
     } catch (error) {
       next(error);
     }

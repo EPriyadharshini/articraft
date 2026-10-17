@@ -13,7 +13,7 @@ export default function CartPage() {
   };
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shipping = total > 120 ? 0 : 12;
+  const shipping = cart.length === 0 || total >= 120 ? 0 : 12;
   const tax = total * 0.08;
   const grandTotal = total + shipping + tax;
 
