@@ -8,7 +8,7 @@ import { config } from '../config/env.js';
 import { protect } from '../middleware/auth.js';
 import { handleValidationErrors } from '../middleware/validate.js';
 import { errorResponse, successResponse } from '../utils/apiResponse.js';
-import { sendEmail } from '../utils/sendemail.js';
+import { sendEmail } from '../utils/sendEmail.js';
 
 const router = express.Router();
 
