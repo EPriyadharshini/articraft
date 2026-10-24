@@ -23,14 +23,16 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="section-shell flex min-h-[70vh] items-center justify-center py-16">
-      <form onSubmit={submit} className="w-full max-w-md rounded-[2rem] border border-stone-200 bg-white p-8 shadow-soft">
+    <div className="section-shell flex min-h-[70vh] items-center justify-center py-16 glow">
+      <div className="w-full max-w-md rounded-[2rem] border border-stone-200 bg-white p-8 shadow-soft transition-shadow duration-300 hover:shadow-[0_0_25px_rgba(59,130,246,0.25)] dark:border-stone-800 dark:bg-[#0f111a] dark:shadow-[0_0_18px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_30px_rgba(59,130,246,0.3)]">
+       <form onSubmit={submit} className="w-full max-w-md rounded-[2rem] border border-stone-200 bg-white p-8 shadow-soft">
         <h1 className="font-display text-4xl text-forest">Choose a new password</h1>
         <label htmlFor="new-password" className="sr-only">New password</label>
         <input id="new-password" type="password" required minLength={8} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="At least 8 characters" className="mt-8 w-full rounded-2xl border border-stone-300 bg-stone-50 px-4 py-3 outline-none focus:border-forest" />
         {error && <p role="alert" className="mt-4 rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</p>}
         <button className="mt-5 w-full rounded-full bg-forest px-5 py-3 font-medium text-white">Update password</button>
       </form>
+      </div>
     </div>
   );
 }
