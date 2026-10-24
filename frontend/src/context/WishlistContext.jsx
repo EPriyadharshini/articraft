@@ -18,7 +18,7 @@ export function WishlistProvider({ children }) {
   const syncedUser = useRef('');
 
   useEffect(() => {
-    if (user?.role === "CUSTOMER") {
+    if (user) {
       if (syncedUser.current === user._id) return;
 
       syncedUser.current = user._id;
@@ -55,7 +55,7 @@ export function WishlistProvider({ children }) {
 
   
 const toggleWishlist = async (productId) => {
-  if (user?.role !== "CUSTOMER") {
+  if (!user) {
     return;
   }
 

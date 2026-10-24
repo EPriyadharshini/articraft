@@ -11,17 +11,17 @@ export default function WishlistPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user || user.role !== "CUSTOMER") {
+    if (!user ) {
       navigate("/login", { replace: true });
     }
   }, [user, navigate]);
 
-  if (!user || user.role !== "CUSTOMER") {
+  if (!user) {
     return null;
   }
   const [products, setProducts] = useState([]);
   const handleAddToCart = async (product) => {
-    if (user?.role !== "CUSTOMER") {
+    if (!user) {
       navigate("/login");
       return;
     }
@@ -34,7 +34,7 @@ export default function WishlistPage() {
   };
 
   const handleToggleWishlist = (productId) => {
-    if (user?.role !== "CUSTOMER") {
+    if (!user) {
       navigate("/login");
       return;
     }

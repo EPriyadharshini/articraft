@@ -7,7 +7,7 @@ import { handleValidationErrors } from '../middleware/validate.js';
 import { errorResponse, successResponse } from '../utils/apiResponse.js';
 
 const router = express.Router();
-router.use(protect, authorize('CUSTOMER'));
+router.use(protect);
 
 const populateCart = (cart) => cart.populate({
   path: 'items.product',

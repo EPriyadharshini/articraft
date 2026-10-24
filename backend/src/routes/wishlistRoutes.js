@@ -5,7 +5,7 @@ import { protect, authorize } from '../middleware/auth.js';
 import { errorResponse, successResponse } from '../utils/apiResponse.js';
 
 const router = express.Router();
-router.use(protect, authorize('CUSTOMER'));
+router.use(protect);
 
 router.get('/', async (req, res, next) => {
   try {

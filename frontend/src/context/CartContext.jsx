@@ -31,7 +31,7 @@ export function CartProvider({ children }) {
 
   // Load cart only for logged-in customers
   useEffect(() => {
-    if (user?.role !== "CUSTOMER") {
+    if (!user) {
       setCart([]);
       return;
     }
@@ -59,7 +59,7 @@ export function CartProvider({ children }) {
     setError("");
 
     // Redirect guest users to login
-    if (user?.role !== "CUSTOMER") {
+    if (!user) {
       window.location.href = "/login";
       return;
     }
@@ -83,7 +83,7 @@ export function CartProvider({ children }) {
   const updateQuantity = async (id, quantity) => {
     setError("");
 
-    if (user?.role !== "CUSTOMER") {
+    if (!user) {
       setError("Please login to update your cart.");
       return;
     }
@@ -106,7 +106,7 @@ export function CartProvider({ children }) {
   const removeFromCart = async (id) => {
     setError("");
 
-    if (user?.role !== "CUSTOMER") {
+    if (!user) {
       return;
     }
 
@@ -127,7 +127,7 @@ export function CartProvider({ children }) {
   const clearCart = async () => {
     setError("");
 
-    if (user?.role !== "CUSTOMER") {
+    if (!user) {
       setCart([]);
       return;
     }
