@@ -22,6 +22,7 @@ export default function Layout({ children }) {
   const [searchParams] = useSearchParams();
   const visibleNavItems = navItems.filter((item) => !item.roles || item.roles.includes(user?.role));
   const [menuOpen, setMenuOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
   // Amazon-style header search state, synchronized with URL query params
   const [headerSearch, setHeaderSearch] = useState(() => searchParams.get('search') || '');
@@ -152,21 +153,58 @@ export default function Layout({ children }) {
                   </span>
                 )}
               </Link>
+
               {user ? (
-                <div className="flex items-center gap-2 ml-1">
-                  <Link
-                    to="/account"
-                    className="flex items-center gap-1.5 rounded-full bg-forest px-3.5 py-1.5 text-xs font-semibold text-white dark:bg-blue-600"
-                  >
-                    <UserRound size={13} />
-                    {user.name.split(" ")[0]}
-                  </Link>
+                <div className="relative ml-1 flex items-center gap-3">
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                    Hi, {user.name.split(" ")[0]}
+                  </span>
+
                   <button
-                    onClick={logout}
-                    className="text-xs text-slate-500 hover:text-forest dark:text-slate-400 dark:hover:text-blue-400"
+                    type="button"
+                    onClick={() => setProfileMenuOpen((prev) => !prev)}
+                    aria-label="Open profile menu"
+                    aria-expanded={profileMenuOpen}
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-300 text-slate-700 transition hover:border-forest hover:bg-stone-100 hover:text-forest dark:border-stone-700 dark:text-slate-200 dark:hover:border-blue-400 dark:hover:bg-[#141824] dark:hover:text-blue-400"
                   >
-                    Log Out
+                    <UserRound size={19} />
                   </button>
+
+                  {profileMenuOpen && (
+                    <div className="absolute right-0 top-full z-50 mt-3 w-52 overflow-hidden rounded-2xl border border-stone-200 bg-white py-2 shadow-xl dark:border-stone-700 dark:bg-[#0b0d16]">
+                      <div className="border-b border-stone-100 px-4 py-3 dark:border-stone-800">
+                        <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                          {user.name}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                          {user.role}
+                        </p>
+                      </div>
+
+                      <Link
+                        to="/account"
+                        onClick={() => setProfileMenuOpen(false)}
+                        className="block px-4 py-3 text-sm text-slate-700 transition hover:bg-stone-100 hover:text-forest dark:text-slate-200 dark:hover:bg-[#141824] dark:hover:text-blue-400"
+                      >
+                        <span className="flex items-center gap-3">
+                          <UserRound size={16} />
+                          My Profile
+                        </span>
+                      </Link>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setProfileMenuOpen(false);
+                          logout();
+                        }}
+                        className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30"
+                      >
+                        <span>↪</span>
+                        Logout
+                      </button>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="flex items-center ml-1">
