@@ -150,9 +150,9 @@ export default function HomePage() {
       <section className="border-b border-stone-200/60 bg-[#fffaf5] py-12 lg:py-20 dark:border-stone-800/80 dark:bg-[#05060f]">
         <div className="section-shell grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
           <div className="space-y-6 lg:pr-6">
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 rounded-full border border-amber-300/80 bg-amber-50/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-amber-900 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-300">
+            {/* <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 rounded-full border border-amber-300/80 bg-amber-50/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-amber-900 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-300">
               <Sparkles size={14} /> Curated Artisan Marketplace
-            </motion.div>
+            </motion.div> */}
 
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
@@ -419,7 +419,7 @@ export default function HomePage() {
 
       {/* 7. Creator Call to Action */}
       <section className="section-shell py-16">
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-forest px-8 py-16 text-white shadow-soft lg:px-16 dark:border dark:border-stone-800 dark:bg-[#0d1326]">
+        <div className="relative overflow-hidden rounded-[2.5rem]  px-8 py-16 text-white shadow-soft lg:px-16 dark:border dark:border-stone-800 dark:bg-[#0d1326]">
           <div className="max-w-2xl">
             <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-medium text-amber-200 backdrop-blur dark:bg-blue-500/10 dark:text-blue-300">
               <Palette size={14} /> Join Our Artisan Community

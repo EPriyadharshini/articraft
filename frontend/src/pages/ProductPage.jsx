@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate,useParams } from 'react-router-dom';
 import api from '../services/api';
-import { Star, ShoppingBag, Heart, Truck, ShieldCheck, PackageCheck } from 'lucide-react';
+import { Star, ShoppingBag, Heart, Truck, ShieldCheck, PackageCheck ,Check} from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { formatINR } from '../utils/currency';
 import ShareButton from '../components/ShareButton';
-
 
 export default function ProductPage() {
   const { productId } = useParams();
@@ -18,6 +17,17 @@ export default function ProductPage() {
   const [reviewMessage, setReviewMessage] = useState('');
   const [canReview, setCanReview] = useState(false);
   const [error, setError] = useState('');
+  const [addedToCart, setAddedToCart] = useState(false);
+
+  useEffect(() => {
+    if (!addedToCart) return;
+
+    const timer = setTimeout(() => {
+      setAddedToCart(false);
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [addedToCart]);
 
   useEffect(() => {
     const load = async () => {
@@ -103,14 +113,50 @@ export default function ProductPage() {
 
           <div className="flex flex-wrap items-center gap-3">
             <button
-              disabled={product.stock <= 0}
-              onClick={() => addToCart(product).catch(() => {})}
-              className="glow-btn flex shrink-0 items-center gap-2 rounded-full bg-forest px-6 py-3 font-medium text-white hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
+              type="button"
+              disabled={product.stock <= 0 || addedToCart}
+              onClick={async () => {
+                if (!user) {
+                  navigate("/login");
+                  return;
+                }
+
+                setAddedToCart(true);
+
+                try {
+                  await addToCart(product);
+                  // No success toast
+                } catch {
+                  setAddedToCart(false);
+
+                  toast.error(
+                    "Could not add product to cart. Please try again.",
+                    {
+                      variant: "glass",
+                      position: "top-center",
+                    },
+                  );
+                }
+              }}
+              className={`glow-btn flex shrink-0 items-center gap-2 rounded-full px-6 py-3 font-medium text-white transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70 ${
+                addedToCart
+                  ? "bg-emerald-600 shadow-lg shadow-emerald-200"
+                  : "bg-forest hover:bg-emerald-900"
+              }`}
             >
               <span className="glow-blob" />
               <span className="glow-inner flex items-center gap-2">
-                <ShoppingBag size={18} />
-                {product.stock <= 0 ? "Out of stock" : "Add to Cart"}
+                {addedToCart ? (
+                  <>
+                    <Check size={18} />
+                    Added to cart
+                  </>
+                ) : (
+                  <>
+                    <ShoppingBag size={18} />
+                    {product.stock <= 0 ? "Out of stock" : "Add to Cart"}
+                  </>
+                )}
               </span>
             </button>
             <button

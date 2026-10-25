@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+
+import { createContext, useContext, useEffect, useState } from "react";
 import api from "../services/api";
 import { useAuth } from "./AuthContext";
 
@@ -6,7 +7,11 @@ const CartContext = createContext(null);
 
 const normalize = (item) => ({
   ...(item.product || item),
-  id: item.product?._id || item.product?.id || item.id,
+  id:
+    item.product?._id ||
+    item.product?.id ||
+    item.id ||
+    item._id,
   images: (item.product?.images || item.images || []).map((image) =>
     typeof image === "string" ? image : image.url,
   ),
@@ -20,21 +25,30 @@ const normalize = (item) => ({
 
 export function CartProvider({ children }) {
   const { user } = useAuth();
+  const userId = user?.id ?? user?._id;
 
   const [cart, setCart] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const sync = (data) => {
-    setCart((data.items || []).filter((item) => item.product).map(normalize));
+    setCart(
+      (data?.items || [])
+        .filter((item) => item.product)
+        .map(normalize),
+    );
   };
 
-  // Load cart only for logged-in customers
+  // Load the cart when the logged-in customer changes.
   useEffect(() => {
-    if (!user) {
+    if (!userId) {
       setCart([]);
+      setLoading(false);
+      setError("");
       return;
     }
+
+    let cancelled = false;
 
     setLoading(true);
     setError("");
@@ -42,35 +56,68 @@ export function CartProvider({ children }) {
     api
       .get("/cart")
       .then((response) => {
-        sync(response.data.data.cart);
+        if (!cancelled) {
+          sync(response.data.data.cart);
+        }
       })
       .catch((requestError) => {
-        console.error("Unable to load cart", requestError);
-        setError(
-          requestError.response?.data?.message || "Unable to load your cart.",
-        );
+        if (!cancelled) {
+          console.error("Unable to load cart", requestError);
+          setError(
+            requestError.response?.data?.message ||
+              "Unable to load your cart.",
+          );
+        }
       })
       .finally(() => {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       });
-  }, [user]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
 
   const addToCart = async (product) => {
     setError("");
 
-    // Redirect guest users to login
-    if (!user) {
+    if (!userId) {
       window.location.href = "/login";
       return;
     }
 
+    const productId = product.id || product._id;
+    const previousCart = cart;
+
+    // Show the item in the UI immediately.
+    setCart((current) => {
+      const existing = current.find(
+        (item) => String(item.id) === String(productId),
+      );
+
+      if (existing) {
+        return current.map((item) =>
+          String(item.id) === String(productId)
+            ? { ...item, quantity: item.quantity + 1 }
+            : item,
+        );
+      }
+
+      return [
+        ...current,
+        normalize({ ...product, id: productId, quantity: 1 }),
+      ];
+    });
+
     try {
       const response = await api.post("/cart/items", {
-        productId: product.id || product._id,
+        productId,
       });
 
       sync(response.data.data.cart);
     } catch (requestError) {
+      setCart(previousCart);
+
       const message =
         requestError.response?.data?.message ||
         "Unable to add this item to your cart.";
@@ -78,15 +125,28 @@ export function CartProvider({ children }) {
       setError(message);
       throw requestError;
     }
-  };;
+  };
 
+  // The quantity argument is the NEW quantity, not a delta.
   const updateQuantity = async (id, quantity) => {
     setError("");
 
-    if (!user) {
-      setError("Please login to update your cart.");
-      return;
+    if (!userId) {
+      const requestError = new Error("Please login to update your cart.");
+      setError(requestError.message);
+      throw requestError;
     }
+
+    const previousCart = cart;
+
+    // Update quantity and totals immediately.
+    setCart((current) =>
+      current.map((item) =>
+        String(item.id) === String(id)
+          ? { ...item, quantity }
+          : item,
+      ),
+    );
 
     try {
       const response = await api.patch(`/cart/items/${id}`, {
@@ -95,10 +155,12 @@ export function CartProvider({ children }) {
 
       sync(response.data.data.cart);
     } catch (requestError) {
-      const message =
-        requestError.response?.data?.message || "Unable to update your cart.";
+      setCart(previousCart);
 
-      setError(message);
+      setError(
+        requestError.response?.data?.message ||
+          "Unable to update your cart.",
+      );
       throw requestError;
     }
   };
@@ -106,20 +168,25 @@ export function CartProvider({ children }) {
   const removeFromCart = async (id) => {
     setError("");
 
-    if (!user) {
-      return;
-    }
+    if (!userId) return;
+
+    const previousCart = cart;
+
+    // Remove the item immediately.
+    setCart((current) =>
+      current.filter((item) => String(item.id) !== String(id)),
+    );
 
     try {
       const response = await api.delete(`/cart/items/${id}`);
-
       sync(response.data.data.cart);
     } catch (requestError) {
-      const message =
-        requestError.response?.data?.message ||
-        "Unable to remove this item from your cart.";
+      setCart(previousCart);
 
-      setError(message);
+      setError(
+        requestError.response?.data?.message ||
+          "Unable to remove this item from your cart.",
+      );
       throw requestError;
     }
   };
@@ -127,38 +194,45 @@ export function CartProvider({ children }) {
   const clearCart = async () => {
     setError("");
 
-    if (!user) {
+    if (!userId) {
       setCart([]);
       return;
     }
 
+    const previousCart = cart;
+
+    // Clear the UI immediately.
+    setCart([]);
+
     try {
       await api.delete("/cart");
-      setCart([]);
     } catch (requestError) {
-      const message =
-        requestError.response?.data?.message || "Unable to clear your cart.";
+      setCart(previousCart);
 
-      setError(message);
+      setError(
+        requestError.response?.data?.message ||
+          "Unable to clear your cart.",
+      );
       throw requestError;
     }
   };
 
-  const value = useMemo(
-    () => ({
-      cart,
-      loading,
-      error,
-      addToCart,
-      updateQuantity,
-      removeFromCart,
-      clearCart,
-      setCart,
-    }),
-    [cart, loading, error],
+  return (
+    <CartContext.Provider
+      value={{
+        cart,
+        loading,
+        error,
+        addToCart,
+        updateQuantity,
+        removeFromCart,
+        clearCart,
+        setCart,
+      }}
+    >
+      {children}
+    </CartContext.Provider>
   );
-
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
 export const useCart = () => useContext(CartContext);

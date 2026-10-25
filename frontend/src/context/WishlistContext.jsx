@@ -1,12 +1,21 @@
-import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import api from '../services/api';
-import { useAuth } from './AuthContext';
+
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import api from "../services/api";
+import { useAuth } from "./AuthContext";
 
 const WishlistContext = createContext(null);
 
 const readLocal = () => {
   try {
-    return JSON.parse(localStorage.getItem('articraft-wishlist') || '[]');
+    return JSON.parse(
+      localStorage.getItem("articraft-wishlist") || "[]",
+    );
   } catch {
     return [];
   }
@@ -14,27 +23,36 @@ const readLocal = () => {
 
 export function WishlistProvider({ children }) {
   const { user } = useAuth();
+  const userId = user?.id ?? user?._id;
+
   const [wishlist, setWishlist] = useState([]);
-  const syncedUser = useRef('');
+  const syncedUser = useRef("");
 
   useEffect(() => {
-    if (user) {
-      if (syncedUser.current === user._id) return;
+    let cancelled = false;
 
-      syncedUser.current = user._id;
+    if (!userId) {
+      setWishlist(readLocal());
+      syncedUser.current = "";
+      return;
+    }
 
-      const syncWishlist = async () => {
-        const localWishlist = readLocal();
+    if (syncedUser.current === userId) return;
 
-        for (const productId of localWishlist) {
-          try {
-            await api.post(`/wishlist/${productId}`);
-          } catch (error) {
-            console.error("Unable to merge wishlist item", error);
-          }
-        }
+    const syncWishlist = async () => {
+      const localWishlist = readLocal();
+
+      try {
+        // Merge local wishlist items concurrently.
+        await Promise.allSettled(
+          localWishlist.map((productId) =>
+            api.post(`/wishlist/${productId}`),
+          ),
+        );
 
         const response = await api.get("/wishlist");
+
+        if (cancelled) return;
 
         setWishlist(
           (response.data.data.wishlist.products || []).map(
@@ -43,38 +61,54 @@ export function WishlistProvider({ children }) {
         );
 
         localStorage.removeItem("articraft-wishlist");
-      };
+        syncedUser.current = userId;
+      } catch (error) {
+        if (!cancelled) {
+          console.error("Unable to sync wishlist", error);
+        }
+      }
+    };
 
-      syncWishlist().catch(console.error);
-    } else {
-      // Logged out → don't show wishlist items
-      setWishlist(readLocal());
-      syncedUser.current = "";
-    }
-  }, [user]);
+    syncWishlist();
 
-  
-const toggleWishlist = async (productId) => {
-  if (!user) {
-    return;
-  }
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
 
-  const exists = wishlist.includes(productId);
+  const toggleWishlist = async (productId) => {
+    if (!userId) return;
 
-  if (exists) {
-    await api.delete(`/wishlist/${productId}`);
-    setWishlist((items) => items.filter((id) => id !== productId));
-  } else {
-    await api.post(`/wishlist/${productId}`);
-    setWishlist((items) =>
-      items.includes(productId) ? items : [...items, productId],
+    const previousWishlist = wishlist;
+    const exists = previousWishlist.includes(productId);
+
+    // Update the wishlist UI immediately.
+    setWishlist((current) =>
+      exists
+        ? current.filter((id) => id !== productId)
+        : current.includes(productId)
+          ? current
+          : [...current, productId],
     );
-  }
-};
 
+    try {
+      if (exists) {
+        await api.delete(`/wishlist/${productId}`);
+      } else {
+        await api.post(`/wishlist/${productId}`);
+      }
+    } catch (error) {
+      // Restore the previous state if the API request fails.
+      setWishlist(previousWishlist);
+      throw error;
+    }
+  };
 
-  const value = useMemo(() => ({ wishlist, toggleWishlist }), [wishlist, user]);
-  return <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>;
+  return (
+    <WishlistContext.Provider value={{ wishlist, toggleWishlist }}>
+      {children}
+    </WishlistContext.Provider>
+  );
 }
 
 export const useWishlist = () => useContext(WishlistContext);

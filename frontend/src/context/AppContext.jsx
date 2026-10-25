@@ -11,16 +11,19 @@ function CombinedContext({ children }) {
   const cart = useCart();
   const wishlist = useWishlist();
   const [orders, setOrders] = useState([]);
+  const userId = auth.user?.id ?? auth.user?._id;
+  const userRole = auth.user?.role;
 
   useEffect(() => {
-    if (auth.user?.role !== 'CUSTOMER') {
+    if (auth.user?.role !== "CUSTOMER") {
       setOrders([]);
       return;
     }
-    api.get('/orders/my-orders')
+    api
+      .get("/orders/my-orders")
       .then((response) => setOrders(response.data.data.orders || []))
       .catch(console.error);
-  }, [auth.user]);
+  }, [userId, userRole]);
 
   return <AppContext.Provider value={{ ...auth, ...cart, ...wishlist, api, orders, setOrders }}>{children}</AppContext.Provider>;
 }
