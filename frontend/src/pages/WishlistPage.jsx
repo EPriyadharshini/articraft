@@ -18,7 +18,7 @@ export default function WishlistPage() {
 
     const timer = setTimeout(() => {
       setAddedProductId(null);
-    }, 2500);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [addedProductId]);
@@ -156,29 +156,6 @@ export default function WishlistPage() {
                     ? product.category?.name
                     : product.category}
                 </span>
-
-                <button
-                  type="button"
-                  disabled={product.stock <= 0 || addedProductId === product.id}
-                  onClick={() => handleAddToCart(product)}
-                  className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-white transition-all duration-300 ${
-                    addedProductId === product.id
-                      ? "bg-emerald-600 shadow-md shadow-emerald-200"
-                      : "bg-forest hover:bg-emerald-900"
-                  } disabled:cursor-not-allowed disabled:opacity-70`}
-                >
-                  {addedProductId === product.id ? (
-                    <>
-                      <Check size={15} />
-                      Added to cart
-                    </>
-                  ) : (
-                    <>
-                      <ShoppingBag size={15} />
-                      {product.stock <= 0 ? "Out of stock" : "Add to Cart"}
-                    </>
-                  )}
-                </button>
               </div>
 
               <Link
@@ -198,12 +175,27 @@ export default function WishlistPage() {
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    disabled={product.stock <= 0}
+                    disabled={
+                      product.stock <= 0 || addedProductId === product.id
+                    }
                     onClick={() => handleAddToCart(product)}
-                    className="flex items-center gap-2 rounded-full bg-forest px-4 py-2 text-sm font-medium text-white hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
+                    className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-white transition-all duration-300 ${
+                      addedProductId === product.id
+                        ? "bg-emerald-600 shadow-md shadow-emerald-200"
+                        : "bg-forest hover:bg-emerald-900"
+                    } disabled:cursor-not-allowed disabled:opacity-70`}
                   >
-                    <ShoppingBag size={15} />
-                    {product.stock <= 0 ? "Out of stock" : "Add to Cart"}
+                    {addedProductId === product.id ? (
+                      <>
+                        <Check size={15} />
+                        Added to cart
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingBag size={15} />
+                        {product.stock <= 0 ? "Out of stock" : "Add to Cart"}
+                      </>
+                    )}
                   </button>
 
                   <button

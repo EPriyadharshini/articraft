@@ -24,7 +24,7 @@ export default function ProductPage() {
 
     const timer = setTimeout(() => {
       setAddedToCart(false);
-    }, 2500);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [addedToCart]);
@@ -138,14 +138,14 @@ export default function ProductPage() {
                   );
                 }
               }}
-              className={`glow-btn flex shrink-0 items-center gap-2 rounded-full px-6 py-3 font-medium text-white transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70 ${
+              className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-white transition-all duration-300 ${
                 addedToCart
                   ? "bg-emerald-600 shadow-lg shadow-emerald-200"
                   : "bg-forest hover:bg-emerald-900"
               }`}
             >
               <span className="glow-blob" />
-              <span className="glow-inner flex items-center gap-2">
+              <span className="glow-inner flex items-center px-1 py-2 gap-2">
                 {addedToCart ? (
                   <>
                     <Check size={18} />
@@ -169,7 +169,7 @@ export default function ProductPage() {
                 toggleWishlist(product.id);
               }}
               aria-label={`Add ${product.name} to wishlist`}
-              className={`wishlist-btn flex items-center gap-2 rounded-full border px-6 py-3 font-medium ${
+              className={`wishlist-btn flex items-center gap-2 rounded-full border px-6 py-3 font-medium hover:border-forest ${
                 wishlist.includes(product.id)
                   ? "border-clay bg-clay text-white is-active"
                   : "border-stone-300 bg-white text-slate-700"

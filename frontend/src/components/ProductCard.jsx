@@ -15,7 +15,7 @@ export default function ProductCard({ product }) {
 
     const timer = setTimeout(() => {
       setAddedToCart(false);
-    }, 2500);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [addedToCart]);
@@ -141,7 +141,7 @@ export default function ProductCard({ product }) {
             }}
             className={`flex shrink-0 items-center gap-2 rounded-full px-3 py-2 text-sm font-medium text-white shadow-soft transition-all duration-300 sm:px-4 ${
               addedToCart
-                ? "bg-emerald-600 shadow-md shadow-emerald-200"
+                ? "bg-emerald-600 shadow-sm shadow-emerald-200"
                 : "bg-forest hover:bg-emerald-900 dark:bg-blue-600 dark:hover:bg-blue-700"
             } disabled:cursor-not-allowed disabled:opacity-70`}
           >

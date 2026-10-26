@@ -3,6 +3,7 @@ import { Menu, ShoppingBag, Heart, UserRound, Sparkles, Search } from 'lucide-re
 import { useAppContext } from '../context/AppContext';
 import { useEffect, useState } from 'react';
 import ThemeToggle from './ThemeToggle';
+import { useTheme } from '../context/ThemeContext';
 
 const navItems = [
   { label: 'Home', to: '/' },
@@ -23,7 +24,8 @@ export default function Layout({ children }) {
   const visibleNavItems = navItems.filter((item) => !item.roles || item.roles.includes(user?.role));
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
   // Amazon-style header search state, synchronized with URL query params
   const [headerSearch, setHeaderSearch] = useState(() => searchParams.get('search') || '');
   const [headerCategory, setHeaderCategory] = useState(() => searchParams.get('category') || 'All');
@@ -62,24 +64,39 @@ export default function Layout({ children }) {
       <header className="sticky top-0 z-40 border-b border-stone-200 bg-[#fffaf5]/90 backdrop-blur-xl dark:border-stone-800 dark:bg-[#05060f]/90">
         {/* Primary Header Row: Brand, Amazon-style Search, Actions */}
         <div className="section-shell flex items-center justify-between gap-4 py-3.5">
-            {/* <div className="flex h-10 w-10 items-center justify-center rounded-full bg-forest text-white shadow-soft dark:bg-blue-600">
+          {/* <div className="flex h-10 w-10 items-center justify-center rounded-full bg-forest text-white shadow-soft dark:bg-blue-600">
               <Sparkles size={18} />
             </div> */}
-            <Link to="/" className="flex items-center gap-2.5 shrink-0">
-              <img
-                src="/logo.png"
-                alt="Articraft logo"
-                width="50"
-                height="50"
-                className="h-11 w-14 rounded-full object-cover shadow-soft"
-              />
-              {/* <div>
+          <Link to="/about" className="flex items-center gap-2.5 shrink-0">
+            {/* <img
+              src={isDark ? "/logo2.png" : "/whitetheme.png"}
+              alt="Articraft logo"
+              width="50"
+              height="50"
+              className="h-15 w-20 rounded-full object-cover shadow-soft"
+            /> */}
+            <span
+              className={`
+      text-3xl sm:text-4xl
+      font-black tracking-tight
+      transition-all duration-300
+      group-hover:scale-105
+      ${
+        isDark
+          ? "bg-gradient-to-r from-blue-500 via-cyan-400 to-violet-500 bg-clip-text text-transparent"
+          : "text-green-800"
+      }
+    `}
+            >
+              Articraft
+            </span>
+            {/* <div>
                 <div className="font-display text-2xl font-bold tracking-tight text-forest dark:text-slate-100">
                   Articraft
                 </div>
               </div> */}
-            </Link>
-          
+          </Link>
+
           {/* search bar on desktop */}
           <form
             onSubmit={handleHeaderSearch}
