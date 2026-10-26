@@ -535,7 +535,7 @@ export default function HomePage() {
       <section className="section-shell py-16">
         <div className="relative overflow-hidden rounded-[2.5rem]  px-8 py-16 text-forest shadow-soft lg:px-16 dark:border dark:border-stone-800 dark:bg-[#0d1326]">
           <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-medium text-amber-200 backdrop-blur dark:bg-blue-500/10 dark:text-blue-300">
+            <span className="inline-flex items-center gap-2 rounded-full bg-slate-300 px-4 py-1.5 text-xs font-medium text-forest backdrop-blur dark:bg-blue-500/10 dark:text-blue-300">
               <Palette size={14} /> Join Our Artisan Community
             </span>
             <h2 className="mt-4 font-display text-4xl leading-tight sm:text-5xl text-forest">
@@ -548,13 +548,13 @@ export default function HomePage() {
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
                 to="/signup"
-                className="rounded-full bg-white px-7 py-3 text-sm font-semibold text-forest transition hover:bg-black-700 dark:bg-black-900 dark:text-white dark:hover:bg-blue-900"
+                className="rounded-full border border-stone-700  px-7 py-3 text-sm font-semibold text-forest transition hover:bg-black-700 bg-black-900 dark:text-white dark:hover:bg-blue-900"
               >
                 Become a Seller
               </Link>
               <Link
                 to="/about"
-                className="rounded-full border border-white/40 px-7 py-3 text-sm font-semibold transition hover:bg-white/10 dark:border-stone-700 dark:hover:bg-stone-800"
+                className="rounded-full border px-7 py-3 text-sm font-semibold transition hover:bg-white/10 border-stone-700 dark:hover:bg-stone-800"
               >
                 Learn More
               </Link>
