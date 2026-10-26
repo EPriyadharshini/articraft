@@ -1,50 +1,36 @@
+
 import { useEffect, useState } from 'react';
 import api from '../services/api';
-import { Link,useNavigate } from 'react-router-dom';
-import { Heart, ShoppingBag, Trash2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Heart, ShoppingBag, Trash2,Check } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { formatINR } from '../utils/currency';
-
+import { toast } from 'mercy-toast-pro';
 
 export default function WishlistPage() {
   const { wishlist, toggleWishlist, addToCart, user } = useAppContext();
   const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+  const [addedProductId, setAddedProductId] = useState(null);
 
   useEffect(() => {
-    if (!user ) {
-      navigate("/login", { replace: true });
+    if (addedProductId === null) return;
+
+    const timer = setTimeout(() => {
+      setAddedProductId(null);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [addedProductId]);
+  useEffect(() => {
+    if (!user) {
+      navigate('/login', { replace: true });
     }
   }, [user, navigate]);
 
-  if (!user) {
-    return null;
-  }
-  const [products, setProducts] = useState([]);
-  const handleAddToCart = async (product) => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-
-    try {
-      await addToCart(product);
-    } catch {
-      // The context handles genuine API errors.
-    }
-  };
-
-  const handleToggleWishlist = (productId) => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-
-    toggleWishlist(productId);
-  };
-
   useEffect(() => {
     const fetchWishlistProducts = async () => {
-      if (!wishlist.length) {
+      if (!user || !wishlist.length) {
         setProducts([]);
         return;
       }
@@ -52,24 +38,82 @@ export default function WishlistPage() {
       try {
         const response = await api.get('/wishlist');
         const saved = response.data.data.wishlist.products || [];
-        setProducts(saved.map((product) => ({
-          ...product,
-          id: product._id,
-          images: (product.images || []).map((image) => (typeof image === 'string' ? image : image.url)),
-          artist: product.artist?.user?.name || product.artist?.name || '',
-        })));
+
+        setProducts(
+          saved.map((product) => ({
+            ...product,
+            id: product._id,
+            images: (product.images || []).map((image) =>
+              typeof image === 'string' ? image : image.url
+            ),
+            artist: product.artist?.user?.name || product.artist?.name || '',
+          }))
+        );
       } catch (error) {
         console.error('Error loading wishlist', error);
+        toast.error('Could not load your wishlist.', {
+          variant: 'glass',
+        });
       }
     };
 
     fetchWishlistProducts();
-  }, [wishlist]);
+  }, [wishlist, user]);
+
+  const handleAddToCart = async (product) => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    // Update the button immediately
+    setAddedProductId(product.id);
+
+    try {
+      await addToCart(product);
+      // No success toast
+    } catch (error) {
+      setAddedProductId(null);
+
+      toast.error("Could not add product to cart. Please try again.", {
+        variant: "glass",
+      });
+    }
+  };
+
+  const handleToggleWishlist = async (product) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      await toggleWishlist(product.id);
+
+      setProducts((current) =>
+        current.filter((item) => item.id !== product.id),
+      );
+
+      toast.info(`${product.name} removed from wishlist.`, {
+        variant: "glass",
+      });
+    } catch (error) {
+      toast.error('Could not update wishlist. Please try again.', {
+        variant: 'glass',
+      });
+    }
+  };
+
+  if (!user) {
+    return null;
+  }
 
   if (!wishlist.length) {
     return (
       <div className="section-shell py-12">
-        <h1 className="font-display text-5xl text-forest">Your wishlist</h1>
+        <h1 className="font-display text-5xl text-forest">
+          Your wishlist
+        </h1>
         <div className="mt-8 rounded-[2rem] border border-dashed border-stone-300 bg-white p-8 text-slate-500">
           You have no saved products yet. Explore the marketplace and add pieces you love.
         </div>
@@ -104,6 +148,7 @@ export default function WishlistPage() {
                 className="h-72 w-full object-cover"
               />
             </Link>
+
             <div className="p-5">
               <div className="flex items-center justify-between gap-3">
                 <span className="text-xs uppercase tracking-[0.2em] text-slate-500">
@@ -111,36 +156,51 @@ export default function WishlistPage() {
                     ? product.category?.name
                     : product.category}
                 </span>
-                <button
-                  onClick={() => handleToggleWishlist(product.id)}
-                  className="rounded-full bg-clay p-2 text-white"
-                  aria-label={`Remove ${product.name} from wishlist`}
-                >
-                  <Heart size={15} fill="currentColor" />
-                </button>
               </div>
+
               <Link
                 to={`/product/${product.slug || product.id}`}
                 className="mt-4 block text-2xl font-semibold text-slate-800 hover:text-forest"
               >
                 {product.name}
               </Link>
+
               <p className="mt-1 text-sm text-slate-500">by {product.artist}</p>
+
               <div className="mt-5 flex items-center justify-between">
                 <div className="text-2xl font-bold text-forest">
                   {formatINR(product.price)}
                 </div>
+
                 <div className="flex items-center gap-2">
                   <button
-                    disabled={product.stock <= 0}
-                    onClick={() => handleAddToCart(product).catch(() => {})}
-                    className="flex items-center gap-2 rounded-full bg-forest px-4 py-2 text-sm font-medium text-white hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
+                    type="button"
+                    disabled={
+                      product.stock <= 0 || addedProductId === product.id
+                    }
+                    onClick={() => handleAddToCart(product)}
+                    className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-white transition-all duration-300 ${
+                      addedProductId === product.id
+                        ? "bg-emerald-600 shadow-md shadow-emerald-200"
+                        : "bg-forest hover:bg-emerald-900"
+                    } disabled:cursor-not-allowed disabled:opacity-70`}
                   >
-                    <ShoppingBag size={15} />
-                    {product.stock <= 0 ? "Out of stock" : "Add to Cart"}
+                    {addedProductId === product.id ? (
+                      <>
+                        <Check size={15} />
+                        Added to cart
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingBag size={15} />
+                        {product.stock <= 0 ? "Out of stock" : "Add to Cart"}
+                      </>
+                    )}
                   </button>
+
                   <button
-                    onClick={() => handleToggleWishlist(product.id)}
+                    type="button"
+                    onClick={() => handleToggleWishlist(product)}
                     className="rounded-full border border-stone-300 p-2 text-slate-600 hover:text-rose-600"
                     aria-label={`Delete ${product.name}`}
                   >

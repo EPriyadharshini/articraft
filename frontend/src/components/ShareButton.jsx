@@ -27,9 +27,14 @@ export default function ShareButton({ title, url = window.location.href }) {
 
   if (isDark) {
     return (
-      <button type="button" onClick={handleShare} className="share-btn" aria-label="Share this product">
+      <button
+        type="button"
+        onClick={handleShare}
+        aria-label="Share this product"
+        className="flex items-center gap-2 rounded-full border border-stone-300 bg-white px-6 py-3 font-medium text-slate-700 hover:border-forest hover:text-forest"
+      >
         {copied ? <Check size={18} /> : <Share2 size={18} />}
-        <span>{copied ? 'Copied!' : 'Share'}</span>
+        <span>{copied ? "Copied!" : "Share"}</span>
       </button>
     );
   }

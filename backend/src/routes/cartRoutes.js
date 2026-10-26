@@ -37,9 +37,9 @@ router.post('/items', [
     const quantity = req.body.quantity || 1;
     const currentCart = await Cart.findOne({ user: req.user._id });
     const currentItem = currentCart?.items.find((item) => item.product.toString() === product._id.toString());
-    if ((currentItem?.quantity || 0) + quantity > product.stock) {
-      return errorResponse(res, `Only ${product.stock} item(s) are available`, 409);
-    }
+    // if ((currentItem?.quantity || 0) + quantity > product.stock) {
+    //   return errorResponse(res, `Only ${product.stock} item(s) are available`, 409);
+    // }
     const existing = await Cart.findOneAndUpdate(
       { user: req.user._id, 'items.product': product._id },
       { $inc: { 'items.$.quantity': quantity } },
