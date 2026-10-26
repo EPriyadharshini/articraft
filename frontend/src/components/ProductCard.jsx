@@ -42,12 +42,12 @@ export default function ProductCard({ product }) {
               .then(() => {
                 const isWishlisted = wishlist.includes(product.id);
 
-                toast.info(
-                  isWishlisted
-                    ? `${product.name} removed from wishlist.`
-                    : `${product.name} added to wishlist!`,
-                  { variant: "glass", position: "top-center" },
-                );
+                // toast.info(
+                //   isWishlisted
+                //     ? `${product.name} removed from wishlist.`
+                //     : `${product.name} added to wishlist!`,
+                //   { variant: "glass", position: "top-center" },
+                // );
               })
               .catch(() => {
                 toast.error("Could not update wishlist. Please try again.", {
