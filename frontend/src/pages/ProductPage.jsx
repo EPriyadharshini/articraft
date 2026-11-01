@@ -15,7 +15,7 @@ export default function ProductPage() {
   const [reviews, setReviews] = useState([]);
   const [review, setReview] = useState({ rating: 5, comment: '' });
   const [reviewMessage, setReviewMessage] = useState('');
-  const [canReview, setCanReview] = useState(false);
+  const canReview = !!user;
   const [error, setError] = useState('');
   const [addedToCart, setAddedToCart] = useState(false);
 
@@ -37,10 +37,7 @@ export default function ProductPage() {
         setRelated(response.data.data.related || []);
         const reviewResponse = await api.get(`/reviews/product/${response.data.data.product._id || response.data.data.product.id}`);
         setReviews(reviewResponse.data.data.reviews || []);
-        if (user?.role === 'CUSTOMER') {
-          const eligibilityResponse = await api.get(`/reviews/product/${response.data.data.product._id || response.data.data.product.id}/eligibility`);
-          setCanReview(eligibilityResponse.data.data.eligible);
-        }
+       
       } catch (requestError) {
         setError(requestError.response?.data?.message || 'Unable to load this product.');
       }
@@ -161,7 +158,7 @@ export default function ProductPage() {
             </button>
             <button
               onClick={() => {
-                if (!user || user.role !== "CUSTOMER") {
+                if (!user) {
                   navigate("/login");
                   return;
                 }
@@ -267,7 +264,7 @@ export default function ProductPage() {
               )}
             </div>
           </section>
-          {user?.role === "CUSTOMER" && canReview && (
+          {canReview && (
             <form
               onSubmit={submitReview}
               className="rounded-[1.5rem] border border-stone-200 bg-white p-5 shadow-soft"

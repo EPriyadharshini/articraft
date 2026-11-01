@@ -216,6 +216,17 @@ export default function Layout({ children }) {
                         </span>
                       </Link>
 
+                      <Link
+                        to="/my-orders"
+                        onClick={() => setProfileMenuOpen(false)}
+                        className="block px-4 py-3 text-sm text-slate-700 transition hover:bg-stone-100 hover:text-forest dark:text-slate-200 dark:hover:bg-[#141824] dark:hover:text-blue-400"
+                      >
+                        <span className="flex items-center gap-3">
+                          <ShoppingBag size={16} />
+                          My Orders
+                        </span>
+                      </Link>
+
                       <button
                         type="button"
                         onClick={() => {

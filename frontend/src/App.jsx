@@ -26,7 +26,7 @@ import ReviewsPage from './pages/ReviewsPage';
 import SellerProductsPage from './pages/SellerProductsPage';
 import InfoPage from './pages/InfoPage';
 import { ToastProvider } from "mercy-toast-pro";
-
+import MyOrders from "./pages/MyOrders";
 export default function App() {
   return (
     <ToastProvider>
@@ -46,6 +46,7 @@ export default function App() {
               path="/reset-password/:token"
               element={<ResetPasswordPage />}
             />
+            <Route path="/my-orders" element={<MyOrders />} />
             <Route element={<ProtectedRoute />}>
               <Route path="/account" element={<AccountPage />} />
               <Route path="/wishlist" element={<WishlistPage />} />

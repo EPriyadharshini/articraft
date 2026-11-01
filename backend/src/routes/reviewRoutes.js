@@ -22,15 +22,21 @@ router.get('/product/:productId', async (req, res, next) => {
   }
 });
 
-router.get('/product/:productId/eligibility', protect, authorize('CUSTOMER'), async (req, res, next) => {
+router.get('/product/:productId/eligibility', protect, async (req, res, next) => {
   try {
-    const product = await Product.findOne({ _id: req.params.productId, isActive: true }).select('_id');
-    if (!product) return errorResponse(res, 'Product not found', 404);
-    const [deliveredOrder, existingReview] = await Promise.all([
-      Order.exists({ user: req.user._id, paymentStatus: 'Paid', sellerOrders: { $elemMatch: { status: 'Delivered', 'items.product': product._id } } }),
-      Review.exists({ product: product._id, user: req.user._id }),
-    ]);
-    return successResponse(res, { eligible: Boolean(deliveredOrder) && !existingReview });
+    const product = await Product.findOne({
+      _id: req.params.productId,
+      isActive: true,
+    }).select("_id");
+    if (!product) return errorResponse(res, "Product not found", 404);
+    const existingReview = await Review.exists({
+      product: product._id,
+      user: req.user._id,
+    });
+
+    return successResponse(res, {
+      eligible: !existingReview,
+    });
   } catch (error) {
     next(error);
   }

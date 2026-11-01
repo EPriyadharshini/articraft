@@ -106,7 +106,7 @@ export const razorpayWebhook = async (req, res, next) => {
   }
 };
 
-router.get('/my-orders', protect, authorize('CUSTOMER'), async (req, res, next) => {
+router.get('/my-orders', protect,  async (req, res, next) => {
   try {
     const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
     return successResponse(res, { orders: orders.map(orderData) });
@@ -115,69 +115,193 @@ router.get('/my-orders', protect, authorize('CUSTOMER'), async (req, res, next) 
   }
 });
 
-router.post('/checkout', protect, authorize('CUSTOMER'), [
-  body('shippingAddress').isObject().withMessage('Shipping address is required'),
-  body('shippingAddress.fullName').trim().notEmpty().withMessage('Recipient name is required'),
-  body('shippingAddress.line1').trim().notEmpty().withMessage('Address is required'),
-  body('shippingAddress.city').trim().notEmpty().withMessage('City is required'),
-  body('shippingAddress.country').trim().notEmpty().withMessage('Country is required'),
-  handleValidationErrors,
-], async (req, res, next) => {
-  const session = await mongoose.startSession();
-  try {
-    const cart = await Cart.findOne({ user: req.user._id }).populate({
-      path: 'items.product',
-      match: { isActive: true },
-      populate: { path: 'artist' },
-    });
-    if (!cart || !cart.items.length || cart.items.some((item) => !item.product)) {
-      return errorResponse(res, 'Cart is empty or contains unavailable products', 400);
+// router.post('/checkout', protect, authorize('CUSTOMER'), [
+//   body('shippingAddress').isObject().withMessage('Shipping address is required'),
+//   body('shippingAddress.fullName').trim().notEmpty().withMessage('Recipient name is required'),
+//   body('shippingAddress.line1').trim().notEmpty().withMessage('Address is required'),
+//   body('shippingAddress.city').trim().notEmpty().withMessage('City is required'),
+//   body('shippingAddress.country').trim().notEmpty().withMessage('Country is required'),
+//   handleValidationErrors,
+// ], async (req, res, next) => {
+//   const session = await mongoose.startSession();
+//   try {
+//     const cart = await Cart.findOne({ user: req.user._id }).populate({
+//       path: 'items.product',
+//       match: { isActive: true },
+//       populate: { path: 'artist' },
+//     });
+//     if (!cart || !cart.items.length || cart.items.some((item) => !item.product)) {
+//       return errorResponse(res, 'Cart is empty or contains unavailable products', 400);
+//     }
+
+//     const items = cart.items.map((item) => ({
+//       product: item.product._id,
+//       artist: item.product.artist._id,
+//       name: item.product.name,
+//       image: item.product.images[0]?.url || '',
+//       quantity: item.quantity,
+//       price: item.product.price,
+//     }));
+//     for (const item of cart.items) {
+//       if (item.quantity > item.product.stock) return errorResponse(res, `Insufficient stock for ${item.product.name}`, 409);
+//     }
+
+//     const sellers = new Map();
+//     items.forEach((item) => {
+//       const seller = sellers.get(item.artist.toString()) || { artist: item.artist, items: [], subtotal: 0 };
+//       seller.items.push(item);
+//       seller.subtotal += item.price * item.quantity;
+//       sellers.set(item.artist.toString(), seller);
+//     });
+//     const totals = totalsFor(items);
+//     const razorpayOrder = await getRazorpay().orders.create({
+//       amount: Math.round(totals.total * 100),
+//       currency: 'INR',
+//       receipt: `articraft_${Date.now()}`,
+//     });
+
+//     session.startTransaction();
+//     const [order] = await Order.create([{
+//       user: req.user._id,
+//       items,
+//       sellerOrders: Array.from(sellers.values()),
+//       shippingAddress: req.body.shippingAddress,
+//       ...totals,
+//       razorpayOrderId: razorpayOrder.id,
+//     }], { session });
+//     await session.commitTransaction();
+//     return successResponse(res, { order: orderData(order), razorpayOrder, keyId: process.env.RAZORPAY_KEY_ID }, 'Checkout created', 201);
+//   } catch (error) {
+//     if (session.inTransaction()) await session.abortTransaction();
+//     next(error);
+//   } finally {
+//     await session.endSession();
+//   }
+// });
+
+router.post(
+  "/checkout",
+  protect,
+  
+  [
+    body("shippingAddress")
+      .isObject()
+      .withMessage("Shipping address is required"),
+    body("shippingAddress.fullName")
+      .trim()
+      .notEmpty()
+      .withMessage("Recipient name is required"),
+    body("shippingAddress.line1")
+      .trim()
+      .notEmpty()
+      .withMessage("Address is required"),
+    body("shippingAddress.city")
+      .trim()
+      .notEmpty()
+      .withMessage("City is required"),
+    body("shippingAddress.country")
+      .trim()
+      .notEmpty()
+      .withMessage("Country is required"),
+    handleValidationErrors,
+  ],
+  async (req, res, next) => {
+    const session = await mongoose.startSession();
+
+    try {
+      session.startTransaction();
+
+      const cart = await Cart.findOne({ user: req.user._id })
+        .session(session)
+        .populate({
+          path: "items.product",
+          match: { isActive: true },
+          populate: { path: "artist" },
+        });
+
+      if (
+        !cart ||
+        !cart.items.length ||
+        cart.items.some((item) => !item.product || !item.product.artist)
+      ) {
+        throw requestError(
+          "Cart is empty or contains unavailable products",
+          400,
+        );
+      }
+
+      const items = cart.items.map((item) => ({
+        product: item.product._id,
+        artist: item.product.artist._id,
+        name: item.product.name,
+        image: item.product.images[0]?.url || "",
+        quantity: item.quantity,
+        price: item.product.price,
+      }));
+
+      for (const item of cart.items) {
+        if (item.quantity > item.product.stock) {
+          throw requestError(
+            `Insufficient stock for ${item.product.name}`,
+            409,
+          );
+        }
+      }
+
+      const sellers = new Map();
+
+      items.forEach((item) => {
+        const seller = sellers.get(item.artist.toString()) || {
+          artist: item.artist,
+          items: [],
+          subtotal: 0,
+        };
+
+        seller.items.push(item);
+        seller.subtotal += item.price * item.quantity;
+
+        sellers.set(item.artist.toString(), seller);
+      });
+
+      const totals = totalsFor(items);
+
+      // TEST MODE: No Razorpay order is created.
+      const [order] = await Order.create(
+        [
+          {
+            user: req.user._id,
+            items,
+            sellerOrders: Array.from(sellers.values()),
+            shippingAddress: req.body.shippingAddress,
+            ...totals,
+            paymentStatus: "Pending",
+          },
+        ],
+        { session },
+      );
+
+      // Clear the cart after successfully creating the order.
+      cart.items = [];
+      await cart.save({ session });
+
+      await session.commitTransaction();
+
+      return successResponse(
+        res,
+        { order: orderData(order) },
+        "Order placed successfully (test mode)",
+        201,
+      );
+    } catch (error) {
+      if (session.inTransaction()) {
+        await session.abortTransaction();
+      }
+      next(error);
+    } finally {
+      await session.endSession();
     }
-
-    const items = cart.items.map((item) => ({
-      product: item.product._id,
-      artist: item.product.artist._id,
-      name: item.product.name,
-      image: item.product.images[0]?.url || '',
-      quantity: item.quantity,
-      price: item.product.price,
-    }));
-    for (const item of cart.items) {
-      if (item.quantity > item.product.stock) return errorResponse(res, `Insufficient stock for ${item.product.name}`, 409);
-    }
-
-    const sellers = new Map();
-    items.forEach((item) => {
-      const seller = sellers.get(item.artist.toString()) || { artist: item.artist, items: [], subtotal: 0 };
-      seller.items.push(item);
-      seller.subtotal += item.price * item.quantity;
-      sellers.set(item.artist.toString(), seller);
-    });
-    const totals = totalsFor(items);
-    const razorpayOrder = await getRazorpay().orders.create({
-      amount: Math.round(totals.total * 100),
-      currency: 'INR',
-      receipt: `articraft_${Date.now()}`,
-    });
-
-    session.startTransaction();
-    const [order] = await Order.create([{
-      user: req.user._id,
-      items,
-      sellerOrders: Array.from(sellers.values()),
-      shippingAddress: req.body.shippingAddress,
-      ...totals,
-      razorpayOrderId: razorpayOrder.id,
-    }], { session });
-    await session.commitTransaction();
-    return successResponse(res, { order: orderData(order), razorpayOrder, keyId: process.env.RAZORPAY_KEY_ID }, 'Checkout created', 201);
-  } catch (error) {
-    if (session.inTransaction()) await session.abortTransaction();
-    next(error);
-  } finally {
-    await session.endSession();
-  }
-});
+  },
+);
 
 router.post('/verify', protect, authorize('CUSTOMER'), [
   body('razorpayOrderId').trim().notEmpty().withMessage('Razorpay order ID is required'),
@@ -227,7 +351,10 @@ router.get('/artist', protect, authorize('ARTIST'), async (req, res, next) => {
   try {
     const artist = await Artist.findOne({ user: req.user._id });
     if (!artist) return errorResponse(res, 'Artist profile not found', 404);
-    const orders = await Order.find({ paymentStatus: 'Paid', 'sellerOrders.artist': artist._id }).sort({ createdAt: -1 });
+    const orders = await Order.find({
+      paymentStatus: { $in: ["Paid", "Pending"] },
+      "sellerOrders.artist": artist._id,
+    }).sort({ createdAt: -1 });
     const sellerOrders = orders.flatMap((order) => order.sellerOrders
       .filter((sellerOrder) => sellerOrder.artist.toString() === artist._id.toString())
       .map((sellerOrder) => ({ ...sellerOrder.toObject(), orderId: order._id, paymentStatus: order.paymentStatus, createdAt: order.createdAt })));

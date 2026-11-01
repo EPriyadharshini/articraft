@@ -51,9 +51,7 @@ export default function WishlistPage() {
         );
       } catch (error) {
         console.error('Error loading wishlist', error);
-        toast.error('Could not load your wishlist.', {
-          variant: 'glass',
-        });
+      
       }
     };
 
