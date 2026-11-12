@@ -1,16 +1,24 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link ,useNavigate} from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import { formatINR } from "../utils/currency";
 
 export default function MyOrders() {
-  const { api } = useAppContext();
+  const { api ,user} = useAppContext();
+  const navigate = useNavigate();
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!user) {
+      navigate("/login", { replace: true });
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    if (!user) return;
     let active = true;
 
     const fetchOrders = async () => {
